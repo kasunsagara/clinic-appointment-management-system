@@ -52,6 +52,28 @@ app.post ("/",
     }
 )
 
+app.post("/student", 
+    (req, res) => {
+        const studentSchema = mongoose.Schema({
+            name: String,
+            age: Number,
+            gender: String
+        })
+
+        const Student = mongoose.model("students", studentSchema)
+
+        const newStudent = new Student(req.body)
+
+        newStudent.save().then(
+            () => {
+                res.json({
+                    message: "Student created"
+                })
+            }
+        )
+    }
+)
+
 app.listen (
     5000, 
     () => {
