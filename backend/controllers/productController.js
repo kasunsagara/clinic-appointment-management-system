@@ -34,8 +34,24 @@ export function getProducts(req, res) {
     )
 }
 
+export function getProductByName(req, res) {
+    Product.find({productName: req.params.productName}).then(
+        (productList) => {
+            res.json({
+                list: productList
+            })
+        }
+    ).catch(
+        (error) => {
+            res.json({
+                message: error
+            })
+        }
+    )
+}
+
 export function deleteProduct(req, res) {
-    Product.deleteOne({productName: req.body.productName}).then(
+    Product.deleteOne({productName: req.params.productName}).then(
         () => {
             res.json({
                 message: "Product delete successfully"

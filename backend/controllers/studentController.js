@@ -34,7 +34,7 @@ export function getStudents(req, res) {
 }
 
 export function deleteStudent(req, res) {
-    Student.deleteOne({name: req.body.name}).then(
+    Student.deleteOne({name: req.params.name}).then(
         () => {
             res.json({
                 message: "Student delete successfully"
