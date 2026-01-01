@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import studentRouter from './routers/studentRouter.js';
 import productRouter from './routers/productRouter.js';
+import userRouter from './routers/userRouter.js';
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(bodyParser.json())
 
 app.use("/api/students", studentRouter);
 app.use("/api/products", productRouter);
+app.use("/api/users", userRouter);
 
 app.listen (
     5000, 
