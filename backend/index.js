@@ -1,6 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import studentRouter from './routers/studentRouter.js';
+import productRouter from './routers/productRouter.js';
 
 const app = express();
 
@@ -16,85 +18,8 @@ connection.once("open", () => {
 
 app.use(bodyParser.json())
 
-app.get ("/",
-    (req, res) => {
-        console.log("this is a get request");
-        console.log(req);
-
-        res.json({
-            message: "hello get request"
-        })
-    }
-)
-
-app.post ("/", 
-    (req, res) => {
-        console.log("this is a post request");
-        console.log(req.body);
-
-        const hour = new Date().getHours();
-
-        let well;
-
-        if (hour < 12) {
-            well = "good morning";
-        } else if (hour < 16) {
-            well = "good afternoon";
-        } else if (hour < 18) {
-            well = "good evening";
-        } else {
-            well = "good night";
-        }
-
-        res.json({
-            message: well + " " + req.body.name
-        })
-    }
-)
-
-app.post("/student", 
-    (req, res) => {
-        const studentSchema = mongoose.Schema({
-            name: String,
-            age: Number,
-            gender: String
-        })
-
-        const Student = mongoose.model("students", studentSchema)
-
-        const newStudent = new Student(req.body)
-
-        newStudent.save().then(
-            () => {
-                res.json({
-                    message: "Student created"
-                })
-            }
-        )
-    }
-)
-
-app.post("/teacher",
-    (req, res) => {
-        const teacherSchema = mongoose.Schema({
-            name: String,
-            phone: String,
-            gender: String
-        })
-
-        const Teacher = mongoose.model("teachers", teacherSchema)
-
-        const newTeacher = new Teacher(req.body)
-
-        newTeacher.save().then(
-            () => {
-                res.json({
-                    message: "Teacher created"
-                })
-            }
-        )
-    }
-)
+app.use("/api/students", studentRouter);
+app.use("/api/products", productRouter);
 
 app.listen (
     5000, 
