@@ -1,9 +1,10 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import mongoose from 'mongoose';
-import studentRouter from './routers/studentRouter.js';
-import productRouter from './routers/productRouter.js';
-import userRouter from './routers/userRouter.js';
+import express from "express";
+import bodyParser from "body-parser";
+import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
+import studentRouter from "./routers/studentRouter.js";
+import productRouter from "./routers/productRouter.js";
+import userRouter from "./routers/userRouter.js";
 
 const app = express();
 
@@ -18,6 +19,22 @@ connection.once("open", () => {
 })
 
 app.use(bodyParser.json())
+
+app.use(
+    (req, res, next) => {
+        const token = req.header("authorization")?.replace("Bearer ", "")
+
+        if(token != null) {
+            jwt.verify(token, "cas-56649901", (error, decoded) => {
+
+                if(!error) {
+                    req.user = decoded
+                }
+            })
+        }
+        next()
+    }
+)
 
 app.use("/api/students", studentRouter);
 app.use("/api/products", productRouter);

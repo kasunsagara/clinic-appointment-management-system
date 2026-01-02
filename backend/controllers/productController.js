@@ -1,8 +1,22 @@
 import Product from "../models/product.js";
-import Student from "../models/student.js";
 
 export function createProduct(req, res) {
+    if(req.user == null) {
+        res.json({
+            message: "You ara not logged in"
+        })
+        return
+    }
+
+    if(req.user.role != "admin") {
+        res.json({
+            message: "You are not an admin"
+        })
+        return
+    }
+
     const product = new Product(req.body)
+    
     product.save().then(
         () => {
             res.json({
