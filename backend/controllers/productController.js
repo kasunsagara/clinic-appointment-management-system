@@ -37,9 +37,15 @@ export function getProducts(req, res) {
 export function getProductByName(req, res) {
     Product.find({productName: req.params.productName}).then(
         (productList) => {
-            res.json({
-                list: productList
-            })
+            if(productList == 0) {
+                res.json({
+                    message: "Product not found"
+                })
+            } else {
+                res.json({
+                    list: productList
+                })                
+            }
         }
     ).catch(
         (error) => {
