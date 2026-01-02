@@ -35,15 +35,15 @@ export function getProducts(req, res) {
 }
 
 export function getProductByName(req, res) {
-    Product.find({productName: req.params.productName}).then(
-        (productList) => {
-            if(productList == 0) {
+    Product.findOne({productName: req.params.productName}).then(
+        product => {
+            if(!product) {
                 res.json({
                     message: "Product not found"
                 })
             } else {
                 res.json({
-                    list: productList
+                    product: product
                 })                
             }
         }
