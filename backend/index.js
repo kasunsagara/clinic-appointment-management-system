@@ -3,8 +3,6 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import studentRouter from "./routers/studentRouter.js";
-import productRouter from "./routers/productRouter.js";
 import userRouter from "./routers/userRouter.js";
 
 dotenv.config();
@@ -39,8 +37,6 @@ app.use(
     }
 )
 
-app.use("/api/students", studentRouter);
-app.use("/api/products", productRouter);
 app.use("/api/users", userRouter);
 
 app.listen (
