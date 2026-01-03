@@ -60,71 +60,76 @@ export async function createUser(req, res) {
     }
 }
 
+export async function loginUser(req, res) {
 
+    try {
+        const user = await User.findOne({email: req.body.email});
 
+        if(!user) {
+            res.user({
+                message: "User not found"
+            })
+        } else {
+            const isPasswordCorrect = bcrypt.compareSync(req.body.password, user.password);
 
+            if(isPasswordCorrect) {
+                const token = jwt.sign({user}, process.env.JWT_SECRET);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export function loginUser(req, res) {
-    User.findOne({email: req.body.email}).then(
-        user => {
-            if(!user) {
                 res.json({
-                    message: "User not found"
+                    message: "User logged successfully",
+                    token: token
                 })
             } else {
-                const isPasswordCorrect = bcrypt.compareSync(req.body.password, user.password)
-
-                if(isPasswordCorrect) {
-                    const token = jwt.sign({user}, process.env.JWT_SECRET)
-                    
-                    res.json({
-                        message: "User logged in",
-                        token: token
-                    })
-                } else {
-                    res.json({
-                        message: "User not logged in (wrong password)"
-                    })
-                }
+                res.json({
+                    message: "Wrong password"
+                })
             }
         }
-    )
+    } catch(error) {
+        res.json({
+            error: error.message
+        })
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export function getUsers(req, res) {
     User.find().then(
