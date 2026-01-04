@@ -53,6 +53,21 @@ export async function getDoctors(req, res) {
     }
 }
 
+export async function getDoctorById(req, res) {
+
+    try {
+        const doctor = await Doctor.findOne({_id: req.params._id});
+
+        res.json({
+            doctor: doctor
+        })
+    } catch(error) {
+        res.json({
+            error: error.message
+        })
+    }
+}
+
  
 
 
