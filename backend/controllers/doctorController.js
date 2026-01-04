@@ -126,6 +126,27 @@ export async function activateDoctor(req, res) {
     }
 }
 
+export async function deleteDoctor(req, res) {
+
+    if(req.user.role != "admin") {
+        res.json({
+            message: "Please login as admin to delete doctor"
+        })
+        return
+    }
+    
+    try {
+        await Doctor.deleteOne({_id: req.params._id});
+
+        res.json({
+            message: "Doctor deleted successfully"
+        })
+    } catch(error) {
+        res.json({
+            message: "Doctor not deleted"
+        })
+    }
+}
 
 
  
