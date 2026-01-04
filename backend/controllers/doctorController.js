@@ -68,6 +68,64 @@ export async function getDoctorById(req, res) {
     }
 }
 
+export async function deactivateDoctor(req, res) {
+
+    if(req.user.role != "admin") {
+        res.json({
+            message: "Admin access only"
+        })
+        return
+    }
+
+    try {
+        const doctor = await Doctor.findByIdAndUpdate(req.params._id, {isActive: false}, {new: true}).populate("userId", "name email phone");
+
+        if(!doctor) {
+            res.json({
+                message: "Doctor not found"
+            })
+        } else {
+            res.json({
+                message: "Doctor deactivated successfully",
+                doctor: doctor
+            })
+        }
+    } catch(error) {
+        res.json({
+            message: "Doctor not deactivated"
+        })
+    }
+}
+
+export async function activateDoctor(req, res) {
+
+    if(req.user.role != "admin") {
+        res.json({
+            message: "Admin access only"
+        })
+        return
+    }
+
+    try {
+        const doctor = await Doctor.findByIdAndUpdate(req.params._id, {isActive: true}, {new: true}).populate("userId", "name email phone");
+
+        if(!doctor) {
+            res.json({
+                message: "Doctor not found"
+            })
+        } else {
+            res.json({
+                message: "Doctor activated successfully",
+                doctor: doctor
+            })
+        }
+    } catch(error) {
+        res.json({
+            message: "Doctor not activated"
+        })
+    }
+}
+
 
 
  
