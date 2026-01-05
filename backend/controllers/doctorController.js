@@ -41,7 +41,8 @@ export async function getDoctors(req, res) {
     }
 
     try {
-        const doctorList = await Doctor.find({isActive: true}).populate("userId", "name email phone");
+        const doctorList = await Doctor.find({isActive: true})
+        .populate("userId", "name email phone");
 
         res.json({
             list: doctorList
@@ -78,7 +79,8 @@ export async function deactivateDoctor(req, res) {
     }
 
     try {
-        const doctor = await Doctor.findByIdAndUpdate(req.params._id, {isActive: false}, {new: true}).populate("userId", "name email phone");
+        const doctor = await Doctor.findByIdAndUpdate(req.params._id, {isActive: false}, {new: true})
+        .populate("userId", "name email phone");
 
         if(!doctor) {
             res.json({

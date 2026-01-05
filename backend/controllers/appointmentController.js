@@ -59,13 +59,31 @@ export async function getAppointments(req, res) {
 
     try {
         if(req.user.role == "admin") {
-            appointmentList = await Appointment.find();
+            appointmentList = await Appointment.find()
+            .populate("patientId", "name email phone") 
+            .populate({
+                path: "doctorId",
+                select: "specialization",
+                populate: {
+                    path: "userId",
+                    select: "name email phone"
+                }
+            }); 
 
             res.json({
                 list: appointmentList
             })
         } else {
-            appointmentList = await Appointment.find({patientId: req.user._id});
+            appointmentList = await Appointment.find({patientId: req.user._id})
+            .populate("patientId", "name email phone")
+            .populate({
+                path: "doctorId",
+                select: "specialization",
+                populate: {
+                    path: "userId",
+                    select: "name email phone"
+                }
+            }); 
 
             res.json({
                 list: appointmentList
