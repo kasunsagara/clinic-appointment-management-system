@@ -32,7 +32,7 @@ const appointmentSchema = new mongoose.Schema({
     note: {
         type: String
     }
-})
+}, { timestamps: true });
 
 const Appointment = mongoose.model("appointments", appointmentSchema);
 

@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import userRouter from "./routers/userRouter.js";
 import doctorRouter from "./routers/doctorRouter.js";
+import appointmentRouter from "./routers/appointmentRouter.js";
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use(
 
 app.use("/api/users", userRouter);
 app.use("/api/doctors", doctorRouter);
+app.use("/api/appointments", appointmentRouter);
 
 app.listen (
     5000, 

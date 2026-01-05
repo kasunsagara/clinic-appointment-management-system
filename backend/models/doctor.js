@@ -38,7 +38,7 @@ const doctorSchema = mongoose.Schema({
         type: Boolean,
         default: true
     }
-})
+});
 
 const Doctor = mongoose.model("doctors", doctorSchema);
 
