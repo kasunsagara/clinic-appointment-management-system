@@ -79,7 +79,8 @@ export async function getDoctors(req, res) {
 export async function getDoctorById(req, res) {
 
     try {
-        const doctor = await Doctor.findOne({_id: req.params._id});
+        const doctor = await Doctor.findOne({_id: req.params._id})
+        .populate("userId", "name email phone");
 
         res.json({
             doctor: doctor
@@ -110,8 +111,7 @@ export async function deactivateDoctor(req, res) {
             })
         } else {
             res.json({
-                message: "Doctor deactivated successfully",
-                doctor: doctor
+                message: "Doctor deactivated successfully"
             })
         }
     } catch(error) {
@@ -139,8 +139,7 @@ export async function activateDoctor(req, res) {
             })
         } else {
             res.json({
-                message: "Doctor activated successfully",
-                doctor: doctor
+                message: "Doctor activated successfully"
             })
         }
     } catch(error) {

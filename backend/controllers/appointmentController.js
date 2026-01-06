@@ -10,7 +10,7 @@ export async function createAppointment(req, res) {
     }
 
     try {
-        const latestAppointment = await Appointment.find().sort({createdAt : -1}).limit(1);
+        const latestAppointment = await Appointment.find().sort({appointmentId : -1}).limit(1);
 
         let appointmentId;
 

@@ -44,13 +44,13 @@ admin
     "password": "1111"
 }
 
-doctor
+patient
 {
     "email": "2@gmail.com",
     "password": "2222"
 }
 
-patient
+doctor
 {
     "email": "3@gmail.com",
     "password": "3333"
