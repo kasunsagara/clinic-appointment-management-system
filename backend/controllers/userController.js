@@ -9,39 +9,27 @@ export async function createUser(req, res) {
 
     const newUserData = req.body;
 
-    if(newUserData.role == "admin") {
-
-        if(req.user == null) {
+    if(newUserData.role === "admin") {
+        if(!req.user) {
             res.json({
                 message: "Please login as admin to create admin account"
             })
             return
         }
-
-        if(req.user.role != "admin") {
+        if(req.user.role !== "admin") {
             res.json({
-                message: "Please login as admin to create admin account"
+                message: "Only admin can create another admin account"
             })
             return
         }
     }
 
-    if(newUserData.role == "doctor") {
-
-        if(req.user == null) {
-            res.json({
-                message: "Please login as admin to create doctor account"
-            })
-            return
-        }
-
-        if(req.user.role != "admin") {
-            res.json({
-                message: "Please login as admin to create doctor account"
-            })
-            return
-        }
-    }    
+    if(newUserData.role === "doctor") {
+        res.json({
+            message: "Doctors cannot be created using this endpoint"
+        })
+        return
+    }
 
     newUserData.password = bcrypt.hashSync(newUserData.password, 10);
 
@@ -52,11 +40,11 @@ export async function createUser(req, res) {
 
         res.json({
             message: "User created successfully"
-        })
-    } catch(error) {
+        });
+    } catch (error) {
         res.json({
             message: "User not created"
-        })
+        });
     }
 }
 

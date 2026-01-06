@@ -1,30 +1,52 @@
 import Doctor from "../models/doctor.js";
+import User from "../models/user.js";
+import bcrypt from "bcrypt";
 
 export async function createDoctor(req, res) {
-
-    if(req.user == null) {
+    if(!req.user) {
         res.json({
-            message: "Please login as admin to create Doctor"
+            message: "Please login as admin to create doctor"
+        })
+        return
+    }
+    if(req.user.role !== "admin") {
+        res.json({
+            message: "Only admin can create doctor"
         })
         return
     }
 
-    if(req.user.role != "admin") {
-        res.json({
-            message: "Please login as admin to create Doctor"
-        })
-        return
-    }
+    const { name, email, password, phone, bio, specialization, availableDays, timeSlots, profilePicture } = req.body;
 
-    const newDoctorData = new Doctor(req.body);
+    let user;
 
     try {
-        await newDoctorData.save();
+        const hashedPassword = bcrypt.hashSync(password, 10);
+        user = new User({
+            name,
+            email,
+            password: hashedPassword,
+            phone,
+            role: "doctor"
+        });
+        await user.save();
+
+        const doctor = new Doctor({
+            userId: user._id,
+            bio,
+            specialization,
+            availableDays,
+            timeSlots,
+            profilePicture
+        });
+        await doctor.save();
 
         res.json({
             message: "Doctor created successfully"
         })
     } catch(error) {
+        if(user?._id) await User.findByIdAndDelete(user._id);
+
         res.json({
             message: "Doctor not created"
         })

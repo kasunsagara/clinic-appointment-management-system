@@ -7,16 +7,9 @@ const doctorSchema = mongoose.Schema({
         required: true,
         unique: true   
     },
-    education: {
-        university: {
-            type: String
-        },
-        degree: {
-            type: String
-        },
-        experienceYears: {
-            type: Number
-        }
+    bio: {
+        type: String,
+        required: true
     },
     specialization: {
         type: String,
