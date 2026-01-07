@@ -15,17 +15,16 @@ export async function createAppointment(req, res) {
         let appointmentId;
 
         if(latestAppointment.length == 0) {
-            appointmentId = "CAS0001"
+            appointmentId = "CA0001"
         } else {
             const currentAppointmentId = latestAppointment[0].appointmentId;
 
-            const numberString = currentAppointmentId.replace("CAS", "");
-
+            const numberString = currentAppointmentId.replace("CA", "");
             const number = parseInt(numberString);
 
             const newNumber = (number + 1).toString().padStart(4, "0");
 
-            appointmentId = "CAS" + newNumber;
+            appointmentId = "CA" + newNumber;
         }
         const newAppointmentData = req.body;
         newAppointmentData.appointmentId = appointmentId;
