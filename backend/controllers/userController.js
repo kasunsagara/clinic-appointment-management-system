@@ -54,7 +54,7 @@ export async function loginUser(req, res) {
         const user = await User.findOne({email: req.body.email});
 
         if(!user) {
-            res.user({
+            res.json({
                 message: "User not found"
             })
         } else {
