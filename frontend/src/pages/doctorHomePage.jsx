@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, Route, Routes } from 'react-router-dom';
-import { BsGraphUp, BsPeople, BsCalendar, BsPerson } from 'react-icons/bs'; 
-import ManageDoctorsPage from './admin/manageDoctorsPage';
+import { BsGraphUp, BsCalendar } from 'react-icons/bs'; 
+import ParentAppointmentsPage from './doctor/parentAppointmentsPage';
 
 export default function DoctorHomePage() {
     const [user, setUser] = useState(null);
@@ -49,7 +49,7 @@ export default function DoctorHomePage() {
                     />
                     <Route 
                         path="/appointments" 
-                        element={<h1 className="text-3xl font-bold text-gray-700">Manage Appointments</h1>} 
+                        element={<ParentAppointmentsPage/>} 
                     />
                     <Route 
                         path="*" 
