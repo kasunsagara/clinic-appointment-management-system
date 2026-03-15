@@ -49,34 +49,65 @@ export async function createUser(req, res) {
 }
 
 export async function loginUser(req, res) {
+  try {
+    const user = await User.findOne({ email: req.body.email });
 
-    try {
-        const user = await User.findOne({email: req.body.email});
+    if (!user) {
+      return res.json({
+        message: "User not found"
+      });
+    }
 
-        if(!user) {
-            res.json({
-                message: "User not found"
-            })
-        } else {
-            const isPasswordCorrect = bcrypt.compareSync(req.body.password, user.password);
+    const isPasswordCorrect = bcrypt.compareSync(
+      req.body.password,
+      user.password
+    );
 
-            if(isPasswordCorrect) {
-                const token = jwt.sign({user}, process.env.JWT_SECRET);
+    if (!isPasswordCorrect) {
+      return res.json({
+        message: "Wrong password"
+      });
+    }
 
-                res.json({
-                    message: "User logged successfully",
-                    token: token
-                })
-            } else {
-                res.json({
-                    message: "Wrong password"
-                })
-            }
+    const token = jwt.sign(
+      {
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role
         }
-    } catch(error) {
-        res.json({
-            error: error.message
-        })
+      },
+      process.env.JWT_SECRET
+    );
+
+    res.json({
+      message: "User logged successfully",
+      token: token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+
+  } catch (error) {
+    res.json({
+      error: error.message
+    });
+  }
+}
+
+export async function logoutUser(req, res) {
+    try {
+        res.status(200).json({
+            message: "Logout successful"
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Logout failed"
+        });
     }
 }
 

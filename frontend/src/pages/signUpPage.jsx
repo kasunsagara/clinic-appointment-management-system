@@ -22,22 +22,19 @@ export default function SignUpPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const toastId = toast.loading("Creating your account...");
 
     try {
       const response = await api.post("/users", formData); // <-- use api instance
 
       if (response.data.message === "User created successfully") {
-        toast.success("Account created successfully! Please login.", { id: toastId });
+        toast.success("Account created successfully!");
         navigate("/login");
       } else {
-        toast.error(response.data.message || "Registration failed", { id: toastId });
+        toast.error(response.data.message || "Registration failed");
       }
     } catch (error) {
       toast.error(
-        error.response?.data?.error || "Registration failed. Please try again.",
-        { id: toastId }
-      );
+        error.response?.data?.error || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
