@@ -4,7 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import HomePage from './pages/homePage';
 import LoginPage from './pages/loginPage';
 import SignUpPage from './pages/signUpPage';
-import AdminDashboard from './pages/adminDashboard';
+import AdminDashboard from './pages/adminHomePage';
 import DoctorHomePage from './pages/doctorHomePage';
 
 function App() {
@@ -19,7 +19,6 @@ function App() {
     <Route path="/register" element={<SignUpPage/>}/>
     <Route path="/admin/*" element={<AdminDashboard/>}/> 
     <Route path="/doctor/*" element={<DoctorHomePage/>}/>
-    <Route path="/*" element={<h1>404 error</h1>}/>
     </Routes>
     </BrowserRouter> 
     </>

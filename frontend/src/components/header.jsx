@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSignOutAlt, FaCalendarCheck, FaUserCircle } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import api from "../services/api";
 
 export default function Header() {
 
@@ -18,17 +19,23 @@ export default function Header() {
     }
   }, []);
 
-  // Logout function
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await api.post("/users/logout", {}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
-    setUser(null);
-
-    toast.success("Logged out successfully");
-
-    navigate("/");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setUser(null);
+      toast.success("Logged out successfully");
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      toast.error("Logout failed");
+    }
   };
 
   return (

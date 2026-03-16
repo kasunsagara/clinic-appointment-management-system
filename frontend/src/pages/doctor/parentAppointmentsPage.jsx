@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function MyAppointmentsPage() {
+export default function ParentAppointmentsPage() {
   const [appointments, setAppointments] = useState([]);
 
   // Load appointments from localStorage or API (for demo, we use dummy data)
@@ -15,8 +15,8 @@ export default function MyAppointmentsPage() {
   }, []);
 
   return (
-    <div className="w-full h-full p-6 bg-gray-100">
-      <h1 className="text-3xl font-bold text-gray-700 mb-6">My Appointments</h1>
+    <div className="w-full h-full p-6">
+      <h1 className="text-3xl font-bold text-gray-700 mb-6">Parent Appointments</h1>
 
       {appointments.length === 0 ? (
         <p className="text-gray-500 text-lg">No appointments scheduled.</p>
