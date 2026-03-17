@@ -3,26 +3,27 @@ import User from "../models/user.js";
 import bcrypt from "bcrypt";
 
 export async function createDoctor(req, res) {
-    if(!req.user) {
-        res.json({
-            message: "Please login as admin to create doctor"
-        })
-        return
-    }
-    if(req.user.role !== "admin") {
-        res.json({
-            message: "Only admin can create doctor"
-        })
-        return
-    }
-
-    const { name, email, password, phone, bio, specialization, availableDays, timeSlots, profilePicture } = req.body;
-
-    let user;
-
     try {
+        if (!req.user) {
+            return res.status(401).json({ message: "Please login as admin to create doctor" });
+        }
+        if (req.user.role !== "admin") {
+            return res.status(403).json({ message: "Only admin can create doctor" });
+        }
+
+        const { name, email, password, phone, bio, specialization, availableDays, timeSlots, profilePicture } = req.body;
+
+        if (!name || !email || !password || !phone || !bio || !specialization || !availableDays || !timeSlots) {
+            return res.status(400).json({ message: "All required fields must be provided" });
+        }
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: "Email already in use" });
+        }
+
         const hashedPassword = bcrypt.hashSync(password, 10);
-        user = new User({
+        const user = new User({
             name,
             email,
             password: hashedPassword,
@@ -41,38 +42,50 @@ export async function createDoctor(req, res) {
         });
         await doctor.save();
 
-        res.json({
-            message: "Doctor created successfully"
-        })
-    } catch(error) {
-        if(user?._id) await User.findByIdAndDelete(user._id);
+        return res.status(201).json({ message: "Doctor created successfully", doctor });
 
-        res.json({
-            message: "Doctor not created"
-        })
+    } catch (error) {
+        console.error("Error creating doctor:", error);
+
+        if (error?.userId) {
+            await User.findByIdAndDelete(error.userId);
+        }
+
+        return res.status(500).json({
+            message: "Doctor not created",
+            error: error.message
+        });
     }
 }
 
 export async function getDoctors(req, res) {
 
-    if(req.user.role != "admin" && req.user.role != "patient") {
-        res.json({
+    // ✅ CHECK if user exists
+    if (!req.user) {
+        return res.status(401).json({
+            message: "Unauthorized - No user"
+        });
+    }
+
+    // ✅ Role check
+    if (req.user.role !== "admin" && req.user.role !== "patient") {
+        return res.status(403).json({
             message: "Access denied"
-        })
-        return
+        });
     }
 
     try {
-        const doctorList = await Doctor.find({isActive: true})
+        const doctorList = await Doctor.find({ isActive: true })
         .populate("userId", "name email phone");
 
         res.json({
             list: doctorList
-        })
-    } catch(error) {
-        res.json({
+        });
+
+    } catch (error) {
+        res.status(500).json({
             error: error.message
-        })
+        });
     }
 }
 

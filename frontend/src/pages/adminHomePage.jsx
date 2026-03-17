@@ -2,9 +2,13 @@ import { useState, useEffect } from "react";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import { BsGraphUp, BsPeople, BsCalendar, BsPerson } from "react-icons/bs";
 import { FaSignOutAlt } from "react-icons/fa";
-import ManageDoctorsPage from "./admin/manageDoctorsPage";
 import { toast } from "react-hot-toast";
 import api from "../services/api";
+import ManageDoctorsPage from "./admin/manageDoctorsPage";
+import AddDoctorPage from "./admin/addDoctorPage";
+import ManageUsersPage from "./admin/manageUsersPage";
+import AddAdminPage from "./admin/addAdminPage";
+import ViewAppointmentsPage from "./admin/viewAppointmentsPage";
 
 export default function AdminHomePage() {
   const [user, setUser] = useState(null);
@@ -44,7 +48,7 @@ export default function AdminHomePage() {
       <div className="absolute bottom-10 right-10 w-80 h-80 bg-teal-200 rounded-full blur-3xl opacity-30"></div>
 
       {/* Sidebar */}
-      <div className="w-[18%] bg-white shadow-xl p-6 flex flex-col justify-between h-screen z-10">
+      <div className="w-[18%] bg-white shadow-xl p-6 flex flex-col justify-between h-screen fixed z-10">
 
         {/* Top: Logo + Menu Items */}
         <div>
@@ -106,7 +110,7 @@ export default function AdminHomePage() {
       </div>
 
       {/* Main Content */}
-      <div className="w-[82%] p-10 overflow-y-auto z-10">
+      <div className="w-[82%] p-10 overflow-y-auto z-10 ml-[18%]">
 
         <Routes>
 
@@ -139,30 +143,14 @@ export default function AdminHomePage() {
 
           {/* Doctors */}
           <Route path="/doctors" element={<ManageDoctorsPage />} />
+          <Route path="/doctors/add-doctor" element={<AddDoctorPage />} />
 
           {/* Appointments */}
-          <Route
-            path="/appointments"
-            element={
-              <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
-                <h1 className="text-2xl font-bold text-gray-700">
-                  Manage Appointments
-                </h1>
-              </div>
-            }
-          />
+          <Route path="/appointments" element={<ViewAppointmentsPage />} />
 
           {/* Users */}
-          <Route
-            path="/users"
-            element={
-              <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
-                <h1 className="text-2xl font-bold text-gray-700">
-                  Manage Users
-                </h1>
-              </div>
-            }
-          />
+          <Route path="/users" element={<ManageUsersPage />} />
+          <Route path="/users/add-admin" element={<AddAdminPage />} />
 
         </Routes>
 

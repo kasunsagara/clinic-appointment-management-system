@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import { BsGraphUp, BsCalendar } from "react-icons/bs";
 import { FaSignOutAlt } from "react-icons/fa";
-import ParentAppointmentsPage from "./doctor/parentAppointmentsPage";
+import ManageAppointmentsPage from "./doctor/manageAppointmentsPage";
 import { toast } from "react-hot-toast";
 import api from "../services/api";
 
@@ -45,7 +45,7 @@ export default function DoctorHomePage() {
       <div className="absolute bottom-10 right-10 w-80 h-80 bg-teal-200 rounded-full blur-3xl opacity-30"></div>
 
       {/* Sidebar */}
-      <div className="w-[18%] bg-white shadow-xl p-6 flex flex-col justify-between h-screen z-10">
+      <div className="w-[18%] bg-white shadow-xl p-6 flex flex-col justify-between h-screen fixed z-10">
 
         {/* Top: Logo + Menu Items */}
         <div>
@@ -72,7 +72,7 @@ export default function DoctorHomePage() {
               className="flex items-center gap-3 p-3 rounded-xl font-medium text-gray-700 hover:bg-gradient-to-r hover:from-blue-600 hover:to-teal-500 hover:text-white transition-all shadow-sm hover:shadow-md"
             >
               <BsCalendar size={20} />
-              Patient Appointments
+              Appointments
             </Link>
           </div>
         </div>
@@ -88,7 +88,7 @@ export default function DoctorHomePage() {
       </div>
 
       {/* Main Content */}
-      <div className="w-[82%] p-10 overflow-y-auto z-10">
+      <div className="w-[82%] p-10 overflow-y-auto z-10 ml-[18%]">
         <Routes>
           <Route
             path="/"
@@ -115,7 +115,7 @@ export default function DoctorHomePage() {
             }
           />
 
-          <Route path="/appointments" element={<ParentAppointmentsPage />} />
+          <Route path="/appointments" element={<ManageAppointmentsPage />} />
 
           <Route
             path="*"

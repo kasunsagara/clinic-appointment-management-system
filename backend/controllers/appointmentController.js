@@ -1,4 +1,5 @@
 import Appointment from "../models/appointment.js";
+import Doctor from "../models/doctor.js";
 
 export async function createAppointment(req, res) {
 
@@ -47,50 +48,60 @@ export async function createAppointment(req, res) {
 
 export async function getAppointments(req, res) {
 
-    if(req.user.role != "admin" && req.user.role != "patient") {
-        res.json({
-            message: "Access denied"
-        })
-        return
+    if(req.user.role != "admin" && req.user.role != "patient" && req.user.role != "doctor") {
+        return res.status(403).json({ message: "Access denied" });
     }
 
-    let appointmentList;
-
     try {
+        let appointmentList;
+
         if(req.user.role == "admin") {
+            // Admin: see all appointments
             appointmentList = await Appointment.find()
-            .populate("patientId", "name email phone") 
-            .populate({
-                path: "doctorId",
-                select: "specialization",
-                populate: {
-                    path: "userId",
-                    select: "name email phone"
-                }
-            }); 
+                .populate("patientId", "name email phone")
+                .populate({
+                    path: "doctorId",
+                    select: "specialization",
+                    populate: {
+                        path: "userId",
+                        select: "name email phone"
+                    }
+                });
+        } else if(req.user.role == "patient") {
+            // Patient: see only their own appointments
+            appointmentList = await Appointment.find({ patientId: req.user._id })
+                .populate("patientId", "name email phone")
+                .populate({
+                    path: "doctorId",
+                    select: "specialization",
+                    populate: {
+                        path: "userId",
+                        select: "name email phone"
+                    }
+                });
+        } else if(req.user.role == "doctor") {
+            // Doctor: see only appointments assigned to them
+            // Assuming doctorId in Appointment references the Doctor model which has userId = req.user._id
+            const doctor = await Doctor.findOne({ userId: req.user._id });
+            if (!doctor) {
+                return res.status(404).json({ message: "Doctor profile not found" });
+            }
 
-            res.json({
-                list: appointmentList
-            })
-        } else {
-            appointmentList = await Appointment.find({patientId: req.user._id})
-            .populate("patientId", "name email phone")
-            .populate({
-                path: "doctorId",
-                select: "specialization",
-                populate: {
-                    path: "userId",
-                    select: "name email phone"
-                }
-            }); 
+            appointmentList = await Appointment.find({ doctorId: doctor._id })
+                .populate("patientId", "name email phone")
+                .populate({
+                    path: "doctorId",
+                    select: "specialization",
+                    populate: {
+                        path: "userId",
+                        select: "name email phone"
+                    }
+                });
+        }
 
-            res.json({
-                list: appointmentList
-            })
-        } 
-    } catch(error) {
-        res.json({
-            error: error.message
-        })
+        res.json({ list: appointmentList });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 }
