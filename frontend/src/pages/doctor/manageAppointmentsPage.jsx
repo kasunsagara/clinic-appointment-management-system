@@ -58,7 +58,7 @@ export default function ManageAppointmentsPage() {
     <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-3 pb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage My Appointments</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Appointments</h1>
         </div>
 
         {loading ? (

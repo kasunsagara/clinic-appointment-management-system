@@ -105,3 +105,28 @@ export async function getAppointments(req, res) {
         res.status(500).json({ error: error.message });
     }
 }
+
+export async function updateAppointmentStatus(req, res) {
+    const { status } = req.body;
+    const validStatuses = ["pending", "approved", "completed", "cancelled"];
+
+    if (!validStatuses.includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+    }
+
+    try {
+        const appointment = await Appointment.findByIdAndUpdate(
+            req.params.id,
+            { status },
+            { new: true }
+        );
+
+        if (!appointment) {
+            return res.status(404).json({ message: "Appointment not found" });
+        }
+
+        res.json({ success: true, appointment });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
