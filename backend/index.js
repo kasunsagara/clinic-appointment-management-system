@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import mongoose from "mongoose";
+import connectDB from "./config/db.js";
 import dotenv from "dotenv";
 import cors from "cors";
 import userRouter from "./routers/userRouter.js";
@@ -14,15 +14,7 @@ const app = express();
 
 app.use(cors());
 
-const mongoUrl = process.env.MONGO_DB_URI;
-
-mongoose.connect(mongoUrl)
-  .then(() => {
-    console.log("Database connected");
-  })
-  .catch((error) => {
-    console.error("MongoDB connection error:", error.message);
-  });
+connectDB();
 
 app.use(bodyParser.json())
 
