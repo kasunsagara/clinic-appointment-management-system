@@ -59,34 +59,32 @@ export async function createDoctor(req, res) {
 }
 
 export async function getDoctors(req, res) {
+  // ✅ Check if user exists
+  if (!req.user) {
+    return res.status(401).json({ 
+        message: "Unauthorized - No user" 
+    });
+  }
 
-    // ✅ CHECK if user exists
-    if (!req.user) {
-        return res.status(401).json({
-            message: "Unauthorized - No user"
-        });
-    }
+  // ✅ Role check
+  if (req.user.role !== "admin" && req.user.role !== "patient") {
+    return res.status(403).json({ 
+        message: "Access denied" 
+    });
+  }
 
-    // ✅ Role check
-    if (req.user.role !== "admin" && req.user.role !== "patient") {
-        return res.status(403).json({
-            message: "Access denied"
-        });
-    }
+  try {
+    // 🔹 Return ALL doctors (active + inactive)
+    const doctorList = await Doctor.find()
+      .populate("userId", "name email phone");
 
-    try {
-        const doctorList = await Doctor.find({ isActive: true })
-        .populate("userId", "name email phone");
+    res.json({ list: doctorList });
 
-        res.json({
-            list: doctorList
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            error: error.message
-        });
-    }
+  } catch (error) {
+    res.status(500).json({ 
+        error: error.message 
+    });
+  }
 }
 
 export async function getDoctorById(req, res) {
@@ -101,63 +99,6 @@ export async function getDoctorById(req, res) {
     } catch(error) {
         res.json({
             error: error.message
-        })
-    }
-}
-
-export async function deactivateDoctor(req, res) {
-
-    if(req.user.role != "admin") {
-        res.json({
-            message: "Admin access only"
-        })
-        return
-    }
-
-    try {
-        const doctor = await Doctor.findByIdAndUpdate(req.params._id, {isActive: false}, {new: true})
-        .populate("userId", "name email phone");
-
-        if(!doctor) {
-            res.json({
-                message: "Doctor not found"
-            })
-        } else {
-            res.json({
-                message: "Doctor deactivated successfully"
-            })
-        }
-    } catch(error) {
-        res.json({
-            message: "Doctor not deactivated"
-        })
-    }
-}
-
-export async function activateDoctor(req, res) {
-
-    if(req.user.role != "admin") {
-        res.json({
-            message: "Admin access only"
-        })
-        return
-    }
-
-    try {
-        const doctor = await Doctor.findByIdAndUpdate(req.params._id, {isActive: true}, {new: true}).populate("userId", "name email phone");
-
-        if(!doctor) {
-            res.json({
-                message: "Doctor not found"
-            })
-        } else {
-            res.json({
-                message: "Doctor activated successfully"
-            })
-        }
-    } catch(error) {
-        res.json({
-            message: "Doctor not activated"
         })
     }
 }
@@ -182,6 +123,33 @@ export async function deleteDoctor(req, res) {
             message: "Doctor not deleted"
         })
     }
+}
+
+export async function updateDoctorStatus(req, res) {
+  try {
+    const { id } = req.params;
+
+    const doctor = await Doctor.findById(id);
+
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    // Toggle status
+    doctor.isActive = !doctor.isActive;
+
+    await doctor.save();
+
+    res.json({
+      message: doctor.isActive
+        ? "Doctor activated successfully"
+        : "Doctor deactivated successfully",
+      doctor,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
 }
 
 

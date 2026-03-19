@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function AddDoctorPage() {
   const navigate = useNavigate();
+
+  // Doctor basic info
   const [newDoctor, setNewDoctor] = useState({
     name: "",
     email: "",
@@ -13,33 +15,78 @@ export default function AddDoctorPage() {
     specialization: "",
     bio: "",
     profilePicture: "",
-    availableDays: "",
-    timeSlots: ""
   });
 
+  // Schedule: day-wise time slots
+  const [schedule, setSchedule] = useState({
+    Monday: [],
+    Tuesday: [],
+    Wednesday: [],
+    Thursday: [],
+    Friday: [],
+    Saturday: [],
+    Sunday: []
+  });
+
+  const timeOptions = [
+    "09:00 AM - 12:00 PM",
+    "12:00 PM - 03:00 PM",
+    "03:00 PM - 06:00 PM"
+  ];
+
+  const specializations = [
+    "Cardiologist",
+    "Dermatologist",
+    "Neurologist",
+    "Pediatrician",
+    "Orthopedic",
+    "Dentist",
+    "Psychiatrist",
+    "Ophthalmologist"
+  ];
+
+  // Handle input changes
   const handleInputChange = (e) => {
     setNewDoctor({ ...newDoctor, [e.target.name]: e.target.value });
   };
 
+  // Handle form submission
   const handleAddDoctor = async (e) => {
     e.preventDefault();
+
     const toastId = toast.loading("Adding doctor...");
+
+    // ✅ Frontend validation
+    const { name, email, password, phone, specialization, bio } = newDoctor;
+    if (!name || !email || !password || !phone || !specialization || !bio) {
+      toast.error("All required fields must be provided", { id: toastId });
+      return;
+    }
+
+    // Convert schedule object to backend-compatible arrays
+    const availableDays = [];
+    const timeSlots = [];
+    Object.keys(schedule).forEach(day => {
+      if (schedule[day].length > 0) {
+        availableDays.push(day);
+        schedule[day].forEach(slot => timeSlots.push(slot));
+      }
+    });
 
     try {
       const token = localStorage.getItem("token");
 
-      // API request directly with processed data
-      const response = await api.post("/doctors", {
-        ...newDoctor,
-        availableDays: newDoctor.availableDays.split(",").map(d => d.trim()),
-        timeSlots: newDoctor.timeSlots.split(",").map(t => t.trim())
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`
+      const response = await api.post(
+        "/doctors",
+        {
+          ...newDoctor,
+          availableDays,
+          timeSlots
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
         }
-      });
-
-      console.log("Backend response:", response.data);
+      );
 
       if (response.data.message === "Doctor created successfully") {
         toast.success(response.data.message, { id: toastId });
@@ -55,108 +102,149 @@ export default function AddDoctorPage() {
 
   return (
     <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 flex justify-center">
-      <div className="bg-white rounded-2xl w-full max-w-2xl p-6 shadow-sm">
+      <div className="bg-white rounded-2xl w-full max-w-3xl p-6 shadow-sm">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Add New Doctor</h2>
+
         <form onSubmit={handleAddDoctor} className="space-y-4">
+
+          {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-              <input 
-              type="text" 
-              name="name" 
-              required 
-              value={newDoctor.name} 
-              onChange={handleInputChange} 
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
-              placeholder="Dr. Jane Doe" 
+              <input
+                type="text"
+                name="name"
+                required
+                value={newDoctor.name}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                placeholder="Jane Doe"
               />
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input 
-              type="email" 
-              name="email" 
-              required 
-              value={newDoctor.email} 
-              onChange={handleInputChange} 
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
-              placeholder="jane@clinic.com" 
+              <input
+                type="email"
+                name="email"
+                required
+                value={newDoctor.email}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                placeholder="jane@clinic.com"
               />
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <input 
-              type="password" 
-              name="password" 
-              required 
-              value={newDoctor.password} 
-              onChange={handleInputChange} 
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
-              placeholder="••••••••" 
-              minLength="6" 
+              <input
+                type="password"
+                name="password"
+                required
+                value={newDoctor.password}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                placeholder="••••••••"
+                minLength="6"
               />
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-              <input 
-              type="text" 
-              name="phone" 
-              required 
-              value={newDoctor.phone} 
-              onChange={handleInputChange} 
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
-              placeholder="0773456789" 
+              <input
+                type="text"
+                name="phone"
+                required
+                value={newDoctor.phone}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                placeholder="0773456789"
               />
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
-              <input 
-              type="text" 
-              name="specialization" 
-              required 
-              value={newDoctor.specialization} 
-              onChange={handleInputChange} 
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
-              placeholder="Cardiologist" 
-              />
+              <select
+                name="specialization"
+                required
+                value={newDoctor.specialization}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+              >
+                <option value="">Select specialization</option>
+                {specializations.map(spec => (
+                  <option key={spec} value={spec}>{spec}</option>
+                ))}
+              </select>
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Profile Image URL (Optional)</label>
-              <input 
-              type="text" 
-              name="profilePicture" 
-              value={newDoctor.profilePicture} 
-              onChange={handleInputChange} 
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
-              placeholder="https://..." 
+              <input
+                type="text"
+                name="profilePicture"
+                value={newDoctor.profilePicture}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                placeholder="https://..."
               />
             </div>
           </div>
 
+          {/* Bio */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
-            <textarea name="bio" required value={newDoctor.bio} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" rows="3" placeholder="Brief doctor biography..."></textarea>
+            <textarea
+              name="bio"
+              required
+              value={newDoctor.bio}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              rows="3"
+              placeholder="Brief doctor biography..."
+            ></textarea>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Available Days (comma separated)</label>
-              <input type="text" name="availableDays" required value={newDoctor.availableDays} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Monday, Wednesday, Friday" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Time Slots (comma separated)</label>
-              <input type="text" name="timeSlots" required value={newDoctor.timeSlots} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="09:00-12:00, 14:00-17:00" />
-            </div>
+          {/* Day-wise Schedule */}
+          <div>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">Schedule</h3>
+            {Object.keys(schedule).map(day => (
+              <div key={day} className="mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-1">{day}</label>
+                <select
+                  multiple
+                  value={schedule[day]}
+                  onChange={(e) => {
+                    const selected = Array.from(e.target.selectedOptions, option => option.value);
+                    setSchedule(prev => ({ ...prev, [day]: selected }));
+                  }}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+                >
+                  {timeOptions.map(slot => (
+                    <option key={slot} value={slot}>{slot}</option>
+                  ))}
+                </select>
+              </div>
+            ))}
           </div>
 
+          {/* Buttons */}
           <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
-            <button type="button" onClick={() => navigate("/admin/doctors")} className="px-5 py-2 text-gray-800 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium transition-colors">
+            <button
+              type="button"
+              onClick={() => navigate("/admin/doctors")}
+              className="px-5 py-2 text-gray-800 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium transition-colors"
+            >
               Cancel
             </button>
-            <button type="submit" className="px-5 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium shadow-sm transition-colors">
+            <button
+              type="submit"
+              className="px-5 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium shadow-sm transition-colors"
+            >
               Add Doctor
             </button>
           </div>
+
         </form>
       </div>
     </div>

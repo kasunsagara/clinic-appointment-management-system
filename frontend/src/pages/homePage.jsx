@@ -29,9 +29,7 @@ export default function HomePage() {
                 </span>
               </h1>
               <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0">
-                Book appointments with the best doctors in the city. Experience
-                hassle-free scheduling, timely consultations, and premium healthcare
-                services all in one place.
+                Book appointments with the best doctors in our country. Experience hassle free scheduling, timely consultations, and premium healthcare services all in one place.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link

@@ -56,6 +56,6 @@ patient
 doctor
 {
     "email": "3@example.com",
-    "password": "3333"
+    "password": "33333333"
 }
 */    

@@ -10,7 +10,7 @@ export default function ManageDoctorsPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Decode token from localStorage safely
+  // Decode token safely
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -27,16 +27,12 @@ export default function ManageDoctorsPage() {
     }
   }, []);
 
-  // Fetch doctors list from API
+  // Fetch doctors from backend
   const fetchDoctors = async () => {
     setLoading(true);
     try {
       const response = await api.get("/doctors");
-      if (response.data.list) {
-        setDoctors(response.data.list);
-      } else {
-        setDoctors([]);
-      }
+      setDoctors(response.data.list || []);
     } catch (error) {
       console.error(error);
       toast.error("Failed to fetch doctors");
@@ -50,19 +46,19 @@ export default function ManageDoctorsPage() {
     fetchDoctors();
   }, []);
 
-  // Deactivate doctor without window.confirm
-  const handleDeactivate = async (id) => {
+  // Toggle Active / Deactivate
+  const handleToggleStatus = async (id) => {
     try {
-      const response = await api.delete(`/doctors/state/${id}`);
-      toast.success(response.data.message || "Doctor deactivated");
+      const response = await api.put(`/doctors/${id}/status`);
+      toast.success(response.data.message);
       fetchDoctors();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to deactivate doctor");
+      toast.error("Failed to update status");
     }
   };
 
-  // Delete doctor permanently without window.confirm
+  // Delete doctor permanently
   const handleDelete = async (id) => {
     try {
       const response = await api.delete(`/doctors/${id}`);
@@ -77,12 +73,15 @@ export default function ManageDoctorsPage() {
   return (
     <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Doctors</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Manage Doctors
+          </h1>
           <button
             onClick={() => navigate("/admin/doctors/add-doctor")}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-sm transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-sm"
           >
             <FaPlus /> Add New Doctor
           </button>
@@ -96,81 +95,110 @@ export default function ManageDoctorsPage() {
         ) : doctors.length === 0 ? (
           <div className="p-12 text-center">
             <h3 className="text-xl font-bold text-gray-800 mb-2">No Doctors Found</h3>
-            <p className="text-gray-500">There are no active doctors in the system.</p>
+            <p className="text-gray-500">There are no doctors in the system.</p>
           </div>
         ) : (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
+
+                {/* Table Head */}
                 <thead>
-                  <tr className="bg-gray-50 text-gray-600 border-b border-gray-100 text-sm uppercase tracking-wider">
+                  <tr className="bg-gray-100 text-gray-600 border-b text-sm uppercase">
                     <th className="p-4 font-semibold">Doctor</th>
                     <th className="p-4 font-semibold">Specialization</th>
-                    <th className="p-4 font-semibold">Contact Info</th>
+                    <th className="p-4 font-semibold">Contact</th>
                     <th className="p-4 font-semibold">Status</th>
                     <th className="p-4 font-semibold text-center">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+
+                {/* Table Body */}
+                <tbody className="divide-y">
                   {doctors.map((doctor) => (
-                    <tr key={doctor._id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={doctor._id} className="hover:bg-gray-50">
+
+                      {/* Doctor Info */}
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <img
-                            src={doctor.profilePicture || "https://img.freepik.com/free-vector/user-blue-gradient_78370-4692.jpg"}
-                            alt={doctor.userId?.name || "Doctor"}
-                            className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                            src={
+                              doctor.profilePicture ||
+                              "https://img.freepik.com/free-vector/user-blue-gradient_78370-4692.jpg"
+                            }
+                            alt="doctor"
+                            className="w-10 h-10 rounded-full object-cover"
                           />
                           <div>
-                            <p className="font-bold text-gray-900">Dr. {doctor.userId?.name || "Unknown"}</p>
+                            <p className="font-bold">Dr. {doctor.userId?.name || "Unknown"}</p>
                           </div>
                         </div>
                       </td>
+
+                      {/* Specialization */}
                       <td className="p-4">
                         <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
                           {doctor.specialization || "N/A"}
                         </span>
                       </td>
+
+                      {/* Contact */}
                       <td className="p-4">
-                        <p className="text-sm text-gray-800 font-medium">{doctor.userId?.phone || "-"}</p>
+                        <p className="text-sm font-medium">{doctor.userId?.phone || "-"}</p>
                         <p className="text-xs text-gray-500">{doctor.userId?.email || "-"}</p>
                       </td>
+
+                      {/* Status */}
                       <td className="p-4">
                         {doctor.isActive ? (
                           <span className="text-green-600 font-semibold text-sm flex items-center gap-1">
-                            <span className="w-2 h-2 rounded-full bg-green-500"></span> Active
+                            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                            Active
                           </span>
                         ) : (
                           <span className="text-red-600 font-semibold text-sm flex items-center gap-1">
-                            <span className="w-2 h-2 rounded-full bg-red-500"></span> Inactive
+                            <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                            Inactive
                           </span>
                         )}
                       </td>
+
+                      {/* Actions */}
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
-                          {doctor.isActive && (
-                            <button
-                              onClick={() => handleDeactivate(doctor._id)}
-                              className="px-2 py-1 rounded text-white text-xs font-medium bg-orange-500 hover:bg-orange-600"
-                            >
-                              Deactivate
-                            </button>
-                          )}
+
+                          {/* Toggle Button */}
+                          <button
+                            onClick={() => handleToggleStatus(doctor._id)}
+                            className={`px-3 py-1 rounded text-white text-xs font-medium ${
+                              doctor.isActive
+                                ? "bg-orange-500 hover:bg-orange-600"
+                                : "bg-green-500 hover:bg-green-600"
+                            }`}
+                          >
+                            {doctor.isActive ? "Deactivate" : "Activate"}
+                          </button>
+
+                          {/* Delete Button */}
                           <button
                             onClick={() => handleDelete(doctor._id)}
-                            className="px-2 py-1 rounded text-white text-xs font-medium bg-red-500 hover:bg-red-600"
+                            className="px-3 py-1 rounded text-white text-xs font-medium bg-red-500 hover:bg-red-600"
                           >
                             Delete
                           </button>
+
                         </div>
                       </td>
+
                     </tr>
                   ))}
                 </tbody>
+
               </table>
             </div>
           </div>
         )}
+
       </div>
     </div>
   );

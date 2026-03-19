@@ -75,7 +75,7 @@ export default function ManageAppointmentsPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-gray-50 text-gray-500 border-b border-gray-100 text-sm uppercase tracking-wider">
+                  <tr className="bg-gray-100 text-gray-500 border-b border-gray-100 text-sm uppercase tracking-wider">
                     <th className="p-4 font-semibold whitespace-nowrap">ID / Date / Time</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Patient</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Status</th>

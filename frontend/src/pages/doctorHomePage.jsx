@@ -39,10 +39,6 @@ export default function DoctorHomePage() {
 
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-blue-50 to-teal-50 relative overflow-hidden">
-      
-      {/* Background Decorations */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200 rounded-full blur-3xl opacity-30"></div>
-      <div className="absolute bottom-10 right-10 w-80 h-80 bg-teal-200 rounded-full blur-3xl opacity-30"></div>
 
       {/* Sidebar */}
       <div className="w-[18%] bg-white shadow-xl p-6 flex flex-col justify-between h-screen fixed z-10">
