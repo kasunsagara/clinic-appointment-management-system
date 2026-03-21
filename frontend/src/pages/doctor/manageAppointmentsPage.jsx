@@ -9,7 +9,7 @@ export default function ManageAppointmentsPage() {
   // Fetch appointments assigned to the logged-in doctor
   const fetchAppointments = async () => {
     try {
-      const response = await api.get("/appointments"); // backend endpoint doctor-specific
+      const response = await api.get("/appointments"); // doctor-specific endpoint
       if (response.data.list) {
         setAppointments(response.data.list);
       }
@@ -76,58 +76,79 @@ export default function ManageAppointmentsPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-100 text-gray-500 border-b border-gray-100 text-sm uppercase tracking-wider">
-                    <th className="p-4 font-semibold whitespace-nowrap">ID / Date / Time</th>
-                    <th className="p-4 font-semibold whitespace-nowrap">Patient</th>
+                    <th className="p-4 font-semibold whitespace-nowrap">ID</th>
+                    <th className="p-4 font-semibold whitespace-nowrap">Date / Time</th>
+                    <th className="p-4 font-semibold whitespace-nowrap">Login User</th>
+                    <th className="p-4 font-semibold whitespace-nowrap">Patient Details</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Status</th>
-                    <th className="p-4 font-semibold">Note</th>
                     <th className="p-4 font-semibold">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {appointments.map((apt) => (
                     <tr key={apt._id} className="hover:bg-gray-50 transition-colors">
+                      {/* ID */}
                       <td className="p-4 whitespace-nowrap">
-                        <p className="font-mono text-xs font-bold text-gray-500 mb-1">{apt.appointmentId}</p>
+                        <p className="font-mono text-xs font-bold text-gray-500">
+                          {apt.appointmentId}
+                        </p>
+                      </td>
+
+                      {/* Date / Time */}
+                      <td className="p-4 whitespace-nowrap">
                         <p className="font-semibold text-gray-900">{apt.date}</p>
                         <p className="text-sm text-gray-600">{apt.time}</p>
                       </td>
+
+                      {/* Login User */}
                       <td className="p-4 whitespace-nowrap">
-                        <p className="font-bold text-gray-900">{apt.patientId?.name || "Unknown Patient"}</p>
-                        <p className="text-xs text-gray-500">{apt.patientId?.phone || "N/A"}</p>
+                        <p className="font-bold text-gray-900">
+                          {apt.userId?.name || "Unknown"}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {apt.userId?.phone || "N/A"}
+                        </p>
                       </td>
+
+                      {/* Patient Details */}
+                      <td className="p-4 text-sm text-gray-600">
+                        <p className="font-medium text-gray-600">
+                          Name: {apt.patient?.name || "N/A"}
+                        </p>
+                        <p className="font-medium text-gray-600">
+                          Age: {apt.patient?.age || "N/A"}
+                        </p>
+                        <p className="font-medium text-gray-600">
+                          Reason: {apt.patient?.reason || "No reason provided"}
+                        </p>
+                      </td>
+
+                      {/* Status */}
                       <td className="p-4 whitespace-nowrap">{getStatusBadge(apt.status)}</td>
-                      <td className="p-4 text-sm text-gray-600">{apt.note || <span className="text-gray-400 italic">No note</span>}</td>
+
+                      {/* Actions */}
                       <td className="p-4 whitespace-nowrap space-x-2 flex items-center">
-                        {/* Show all 4 status buttons: Pending, Approve, Complete, Cancel */}
                         <button
                           onClick={() => updateStatus(apt._id, "pending")}
-                          className={`px-2 py-1 rounded text-xs font-medium ${
-                            apt.status === "pending" ? "bg-yellow-500 text-white" : "bg-yellow-500 text-white hover:bg-yellow-600"
-                          }`}
+                          className={`px-2 py-1 rounded text-xs font-medium ${apt.status === "pending" ? "bg-yellow-500 text-white" : "bg-yellow-500 text-white hover:bg-yellow-600"}`}
                         >
                           Pending
                         </button>
                         <button
                           onClick={() => updateStatus(apt._id, "approved")}
-                          className={`px-2 py-1 rounded text-xs font-medium ${
-                            apt.status === "approved" ? "bg-green-500 text-white" : "bg-green-500 text-white hover:bg-green-600"
-                          }`}
+                          className={`px-2 py-1 rounded text-xs font-medium ${apt.status === "approved" ? "bg-green-500 text-white" : "bg-green-500 text-white hover:bg-green-600"}`}
                         >
                           Approve
                         </button>
                         <button
                           onClick={() => updateStatus(apt._id, "completed")}
-                          className={`px-2 py-1 rounded text-xs font-medium ${
-                            apt.status === "completed" ? "bg-blue-500 text-white" : "bg-blue-500 text-white hover:bg-blue-600"
-                          }`}
+                          className={`px-2 py-1 rounded text-xs font-medium ${apt.status === "completed" ? "bg-blue-500 text-white" : "bg-blue-500 text-white hover:bg-blue-600"}`}
                         >
                           Complete
                         </button>
                         <button
                           onClick={() => updateStatus(apt._id, "cancelled")}
-                          className={`px-2 py-1 rounded text-xs font-medium ${
-                            apt.status === "cancelled" ? "bg-red-500 text-white" : "bg-red-500 text-white hover:bg-red-600"
-                          }`}
+                          className={`px-2 py-1 rounded text-xs font-medium ${apt.status === "cancelled" ? "bg-red-500 text-white" : "bg-red-500 text-white hover:bg-red-600"}`}
                         >
                           Cancel
                         </button>

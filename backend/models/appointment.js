@@ -6,7 +6,7 @@ const appointmentSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    patientId: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users",
         required: true
@@ -29,8 +29,19 @@ const appointmentSchema = new mongoose.Schema({
         enum: ["pending", "approved", "completed", "cancelled"],
         default: "pending"
     },
-    note: {
-        type: String
+    patient: {
+        name: {
+            type: String,
+            required: true
+        },
+        age: {
+            type: Number,
+            required: true
+        },
+        reason: {
+            type: String,
+            required: true
+        }
     }
 });
 

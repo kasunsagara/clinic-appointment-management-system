@@ -29,7 +29,7 @@ export async function createAppointment(req, res) {
         }
         const newAppointmentData = req.body;
         newAppointmentData.appointmentId = appointmentId;
-        newAppointmentData.patientId = req.user._id;
+        newAppointmentData.userId = req.user._id;
 
         const appointment = new Appointment(newAppointmentData);
 
@@ -58,7 +58,7 @@ export async function getAppointments(req, res) {
         if(req.user.role == "admin") {
             // Admin: see all appointments
             appointmentList = await Appointment.find()
-                .populate("patientId", "name email phone")
+                .populate("userId", "name email phone")
                 .populate({
                     path: "doctorId",
                     select: "specialization",
@@ -69,8 +69,8 @@ export async function getAppointments(req, res) {
                 });
         } else if(req.user.role == "patient") {
             // Patient: see only their own appointments
-            appointmentList = await Appointment.find({ patientId: req.user._id })
-                .populate("patientId", "name email phone")
+            appointmentList = await Appointment.find({ userId: req.user._id })
+                .populate("userId", "name email phone")
                 .populate({
                     path: "doctorId",
                     select: "specialization",
@@ -88,7 +88,7 @@ export async function getAppointments(req, res) {
             }
 
             appointmentList = await Appointment.find({ doctorId: doctor._id })
-                .populate("patientId", "name email phone")
+                .populate("userId", "name email phone")
                 .populate({
                     path: "doctorId",
                     select: "specialization",

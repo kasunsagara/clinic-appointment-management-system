@@ -60,36 +60,57 @@ export default function ViewAppointmentsPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-gray-50 text-gray-500 border-b border-gray-100 text-sm uppercase tracking-wider">
-                    <th className="p-4 font-semibold whitespace-nowrap">ID / Date / Time</th>
-                    <th className="p-4 font-semibold whitespace-nowrap">Patient</th>
+                  <tr className="bg-gray-100 text-gray-600 border-b border-gray-100 text-sm uppercase tracking-wider">
+                    <th className="p-4 font-semibold whitespace-nowrap">ID</th>
+                    <th className="p-4 font-semibold whitespace-nowrap">Date / Time</th>
+                    <th className="p-4 font-semibold whitespace-nowrap">Login User</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Doctor</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Status</th>
-                    <th className="p-4 font-semibold">Note</th>
                   </tr>
                 </thead>
+
                 <tbody className="divide-y divide-gray-100">
                   {appointments.map((apt) => (
                     <tr key={apt._id} className="hover:bg-gray-50 transition-colors">
+
+                      {/* ID */}
                       <td className="p-4 whitespace-nowrap">
-                        <p className="font-mono text-xs font-bold text-gray-500 mb-1">{apt.appointmentId}</p>
+                        <p className="font-mono text-xs font-bold text-gray-500">
+                          {apt.appointmentId}
+                        </p>
+                      </td>
+
+                      {/* Date / Time */}
+                      <td className="p-4 whitespace-nowrap">
                         <p className="font-semibold text-gray-900">{apt.date}</p>
                         <p className="text-sm text-gray-600">{apt.time}</p>
                       </td>
+
+                      {/* LOGIN USER */}
                       <td className="p-4 whitespace-nowrap">
-                        <p className="font-bold text-gray-900">{apt.patientId?.name || "Unknown Patient"}</p>
-                        <p className="text-xs text-gray-500">{apt.patientId?.phone || "N/A"}</p>
+                        <p className="font-bold text-gray-900">
+                          {apt.userId?.name || "Unknown"}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {apt.userId?.phone || "N/A"}
+                        </p>
                       </td>
+
+                      {/* Doctor */}
                       <td className="p-4 whitespace-nowrap">
-                        <p className="font-bold text-gray-900">Dr. {apt.doctorId?.userId?.name || "Unknown"}</p>
-                        <p className="text-xs text-indigo-600 font-medium">{apt.doctorId?.specialization || "N/A"}</p>
+                        <p className="font-bold text-gray-900">
+                          Dr. {apt.doctorId?.userId?.name || "Unknown"}
+                        </p>
+                        <p className="text-xs text-indigo-600 font-medium">
+                          {apt.doctorId?.specialization || "N/A"}
+                        </p>
                       </td>
+
+                      {/* Status */}
                       <td className="p-4 whitespace-nowrap">
                         {getStatusBadge(apt.status)}
                       </td>
-                      <td className="p-4 text-sm text-gray-600">
-                        {apt.note || <span className="text-gray-400 italic">No note</span>}
-                      </td>
+
                     </tr>
                   ))}
                 </tbody>

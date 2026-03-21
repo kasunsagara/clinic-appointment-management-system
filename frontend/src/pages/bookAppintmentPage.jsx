@@ -2,13 +2,12 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
-import { FaCalendarAlt, FaClock, FaClipboardList, FaUserMd } from "react-icons/fa";
+import { FaCalendarAlt, FaClock, FaClipboardList, FaUserMd, FaUser, FaUserAlt } from "react-icons/fa";
 
 export default function BookAppointment() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // ✅ Get user from localStorage (NO Context)
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
   const [doctor, setDoctor] = useState(null);
@@ -18,11 +17,12 @@ export default function BookAppointment() {
   const [formData, setFormData] = useState({
     date: "",
     time: "",
-    note: ""
+    name: "",
+    age: "",
+    reason: ""
   });
 
   useEffect(() => {
-    // ✅ Check login
     if (!user) {
       toast.error("Please login to book an appointment");
       navigate("/login");
@@ -69,7 +69,11 @@ export default function BookAppointment() {
         doctorId: id,
         date: formData.date,
         time: formData.time,
-        note: formData.note
+        patient: {
+          name: formData.name,          // logged-in user name
+          age: formData.age,
+          reason: formData.reason   // from textarea
+        }
       });
 
       if (response.data.message === "Appointment created successfully") {
@@ -179,12 +183,9 @@ export default function BookAppointment() {
                       ))
                     ) : (
                       <>
-                        <option>09:00 AM</option>
-                        <option>10:00 AM</option>
-                        <option>11:00 AM</option>
-                        <option>02:00 PM</option>
-                        <option>03:00 PM</option>
-                        <option>04:00 PM</option>
+                        <option>08:00 AM - 11:00 PM</option>
+                        <option>12:00 PM - 03:00 PM</option>
+                        <option>04:00 PM - 07:00 PM</option>
                       </>
                     )}
 
@@ -192,28 +193,65 @@ export default function BookAppointment() {
                 </div>
               </div>
 
-              {/* Note */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                  <FaClipboardList className="text-blue-500" /> Reason (Optional)
-                </label>
-                <textarea
-                  name="note"
-                  rows="4"
-                  value={formData.note}
-                  onChange={handleChange}
-                  placeholder="e.g. headache, checkup..."
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50"
-                />
-              </div>
+              {/* Patient Details */}
+              <div className="mt-6">
+                <h1 className="text-gray-500 font-semibold mb-4">Patient Details</h1>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  {/* Name */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                      <FaUser className="text-blue-500" /> Name
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="john doe"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50"
+                    />
+                  </div>
+
+                  {/* Age */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                      <FaUserAlt className="text-blue-500" /> Age
+                    </label>
+                    <input
+                      type="number"
+                      name="age"
+                      value={formData.age}
+                      onChange={handleChange}
+                      placeholder="25"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50"
+                    />
+                  </div>
+
+                  {/* Reason */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                      <FaClipboardList className="text-blue-500" /> Reason (Optional)
+                    </label>
+                    <textarea
+                      name="reason"
+                      rows="4"
+                      value={formData.reason}
+                      onChange={handleChange}
+                      placeholder="e.g. headache, checkup..."
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50"
+                    />
+                  </div>
+
+                </div>
+              </div>    
 
               {/* Submit */}
               <button
                 type="submit"
                 disabled={submitting}
-                className={`w-full py-4 text-white rounded-xl ${
-                  submitting ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
-                }`}
+                className={`w-full py-4 text-white rounded-xl ${submitting ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"}`}
               >
                 {submitting ? "Processing..." : "Confirm Appointment"}
               </button>
