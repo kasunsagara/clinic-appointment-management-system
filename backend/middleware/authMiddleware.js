@@ -3,16 +3,23 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export default function authMiddleware(req, res, next) {
-    const token = req.header("authorization")?.replace("Bearer ", "");
+const authMiddleware = async (req, res, next) => {
+    try {
+        const token = req.header("authorization")?.replace("Bearer ", "");
 
-    if(token != null) {
-        jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
+        if (token != null) {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-            if(!error) {
-                req.user = decoded.user
+            if (decoded) {
+                req.user = decoded.user;
             }
-        })
-            }
-    next()
-}
+        }
+
+        next();
+    } catch (error) {
+        console.error("Auth middleware error:", error);
+        next();
+    }
+};
+
+export default authMiddleware;

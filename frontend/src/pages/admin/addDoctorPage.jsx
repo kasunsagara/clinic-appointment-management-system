@@ -29,9 +29,9 @@ export default function AddDoctorPage() {
   });
 
   const timeOptions = [
-    "09:00 AM - 12:00 PM",
+    "08:00 AM - 11:00 AM",
     "12:00 PM - 03:00 PM",
-    "03:00 PM - 06:00 PM"
+    "04:00 PM - 07:00 PM"
   ];
 
   const specializations = [
@@ -65,11 +65,11 @@ export default function AddDoctorPage() {
 
     // Convert schedule object to backend-compatible arrays
     const availableDays = [];
-    const timeSlots = [];
+    const timeSlots = {};
     Object.keys(schedule).forEach(day => {
       if (schedule[day].length > 0) {
         availableDays.push(day);
-        schedule[day].forEach(slot => timeSlots.push(slot));
+        timeSlots[day] = schedule[day];
       }
     });
 
@@ -205,25 +205,31 @@ export default function AddDoctorPage() {
             ></textarea>
           </div>
 
-          {/* Day-wise Schedule */}
+          {/* Day-wise Schedule with Checkboxes */}
           <div>
             <h3 className="text-sm font-medium text-gray-700 mb-2">Schedule</h3>
             {Object.keys(schedule).map(day => (
               <div key={day} className="mb-3">
-                <label className="block text-sm font-medium text-gray-700 mb-1">{day}</label>
-                <select
-                  multiple
-                  value={schedule[day]}
-                  onChange={(e) => {
-                    const selected = Array.from(e.target.selectedOptions, option => option.value);
-                    setSchedule(prev => ({ ...prev, [day]: selected }));
-                  }}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
-                >
+                <p className="font-medium text-gray-700 mb-1">{day}</p>
+                <div className="flex flex-wrap gap-3">
                   {timeOptions.map(slot => (
-                    <option key={slot} value={slot}>{slot}</option>
+                    <label key={slot} className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-lg cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={schedule[day].includes(slot)}
+                        onChange={(e) => {
+                          setSchedule(prev => {
+                            const updatedSlots = e.target.checked
+                              ? [...prev[day], slot]
+                              : prev[day].filter(s => s !== slot);
+                            return { ...prev, [day]: updatedSlots };
+                          });
+                        }}
+                      />
+                      {slot}
+                    </label>
                   ))}
-                </select>
+                </div>
               </div>
             ))}
           </div>

@@ -22,6 +22,14 @@ export default function BookAppointment() {
     reason: ""
   });
 
+  const [availableTimes, setAvailableTimes] = useState([]);
+
+  // Helper: get day name from date
+  const getDayName = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", { weekday: "long" }); // "Monday", "Tuesday", ...
+  };
+
   useEffect(() => {
     if (!user) {
       toast.error("Please login to book an appointment");
@@ -33,7 +41,7 @@ export default function BookAppointment() {
       try {
         const response = await api.get(`/doctors/${id}`);
         if (response.data.doctor) {
-          setDoctor(response.data.doctor);
+          setDoctor(response.data.doctor); // doctor object fetched from DB
         } else {
           toast.error("Doctor not found");
           navigate("/doctors");
@@ -47,10 +55,23 @@ export default function BookAppointment() {
     };
 
     fetchDoctor();
-  }, [id, navigate]);
+  }, [id, navigate, user]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    // If date changed, update available times based on day
+    if (name === "date" && doctor) {
+      const dayName = getDayName(value); // e.g., "Monday"
+      if (doctor.availableDays?.includes(dayName)) {
+        setAvailableTimes(doctor.timeSlots?.[dayName] || []);
+      } else {
+        setAvailableTimes([]);
+        toast.error(`Doctor is not available on ${dayName}`);
+      }
+      setFormData((prev) => ({ ...prev, time: "" })); // reset previous time
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -70,9 +91,9 @@ export default function BookAppointment() {
         date: formData.date,
         time: formData.time,
         patient: {
-          name: formData.name,          // logged-in user name
+          name: formData.name || user.name,
           age: formData.age,
-          reason: formData.reason   // from textarea
+          reason: formData.reason
         }
       });
 
@@ -176,19 +197,11 @@ export default function BookAppointment() {
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50"
                   >
                     <option value="">Choose a time slot</option>
-
-                    {doctor?.timeSlots?.length > 0 ? (
-                      doctor.timeSlots.map((slot, i) => (
-                        <option key={i} value={slot}>{slot}</option>
-                      ))
+                    {availableTimes.length > 0 ? (
+                      availableTimes.map((slot, i) => <option key={i} value={slot}>{slot}</option>)
                     ) : (
-                      <>
-                        <option>08:00 AM - 11:00 PM</option>
-                        <option>12:00 PM - 03:00 PM</option>
-                        <option>04:00 PM - 07:00 PM</option>
-                      </>
+                      <option disabled>No available slots</option>
                     )}
-
                   </select>
                 </div>
               </div>

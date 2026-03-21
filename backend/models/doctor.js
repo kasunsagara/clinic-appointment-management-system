@@ -23,9 +23,9 @@ const doctorSchema = mongoose.Schema({
         type: [String],
         default: []
     },
-    timeSlots: {
-        type: [String],
-        default: []
+    timeSlots: { 
+        type: Map, 
+        of: [String] 
     },
     isActive: {
         type: Boolean,
