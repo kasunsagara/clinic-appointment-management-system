@@ -14,19 +14,9 @@ export default function Header() {
   // Load user from localStorage
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
-
-    if (!savedUser || savedUser === "undefined") {
-      setUser(null);
-      return;
-    }
-
-    try {
-      const parsedUser = JSON.parse(savedUser);
-      setUser(parsedUser);
-    } catch (err) {
-      console.error("Invalid JSON:", err);
-      setUser(null);
-    }
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+          }
   }, []);
 
   const handleLogout = async () => {

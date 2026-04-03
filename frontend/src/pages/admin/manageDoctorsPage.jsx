@@ -104,7 +104,7 @@ export default function ManageDoctorsPage() {
 
                 {/* Table Head */}
                 <thead>
-                  <tr className="bg-gray-100 text-gray-600 border-b text-sm uppercase">
+                  <tr className="bg-gray-100 text-gray-600 border-b border-gray-100 text-sm uppercase tracking-wider">
                     <th className="p-4 font-semibold">Doctor</th>
                     <th className="p-4 font-semibold">Specialization</th>
                     <th className="p-4 font-semibold">Contact</th>
@@ -114,7 +114,7 @@ export default function ManageDoctorsPage() {
                 </thead>
 
                 {/* Table Body */}
-                <tbody className="divide-y">
+                <tbody className="divide-y divide-gray-100">
                   {doctors.map((doctor) => (
                     <tr key={doctor._id} className="hover:bg-gray-50">
 
