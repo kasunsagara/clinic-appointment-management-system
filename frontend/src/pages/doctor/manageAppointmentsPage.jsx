@@ -78,7 +78,6 @@ export default function ManageAppointmentsPage() {
                   <tr className="bg-gray-100 text-gray-500 border-b border-gray-100 text-sm uppercase tracking-wider">
                     <th className="p-4 font-semibold whitespace-nowrap">ID</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Date / Time</th>
-                    <th className="p-4 font-semibold whitespace-nowrap">Login User</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Patient Details</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Status</th>
                     <th className="p-4 font-semibold">Actions</th>
@@ -98,16 +97,6 @@ export default function ManageAppointmentsPage() {
                       <td className="p-4 whitespace-nowrap">
                         <p className="font-semibold text-gray-900">{apt.date}</p>
                         <p className="text-sm text-gray-600">{apt.time}</p>
-                      </td>
-
-                      {/* Login User */}
-                      <td className="p-4 whitespace-nowrap">
-                        <p className="font-bold text-gray-900">
-                          {apt.userId?.name || "Unknown"}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {apt.userId?.phone || "N/A"}
-                        </p>
                       </td>
 
                       {/* Patient Details */}
