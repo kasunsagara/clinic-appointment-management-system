@@ -29,3 +29,9 @@ export default function uploadMediaToSupabase(file) {
     });
   });
 }
+
+
+
+
+
+

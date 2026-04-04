@@ -2,6 +2,7 @@ import { useState } from "react";
 import api from "../../services/api";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import uploadMediaToSupabase from "../../utils/mediaUpload";
 
 export default function AddDoctorPage() {
   const navigate = useNavigate();
@@ -16,6 +17,9 @@ export default function AddDoctorPage() {
     bio: "",
     profilePicture: "",
   });
+
+  // ✅ new state for file
+  const [profileImageFile, setProfileImageFile] = useState(null);
 
   // Schedule: day-wise time slots
   const [schedule, setSchedule] = useState({
@@ -63,6 +67,18 @@ export default function AddDoctorPage() {
       return;
     }
 
+    // ✅ upload image
+    let imageUrl = "";
+
+    if (profileImageFile) {
+      try {
+        imageUrl = await uploadMediaToSupabase(profileImageFile);
+      } catch (err) {
+        toast.error("Image upload failed", { id: toastId });
+        return;
+      }
+    }
+
     // Convert schedule object to backend-compatible arrays
     const availableDays = [];
     const timeSlots = {};
@@ -80,6 +96,7 @@ export default function AddDoctorPage() {
         "/doctors",
         {
           ...newDoctor,
+          profilePicture: imageUrl, // ✅ set uploaded image URL
           availableDays,
           timeSlots
         },
@@ -178,15 +195,14 @@ export default function AddDoctorPage() {
               </select>
             </div>
 
+            {/* ✅ file upload එක */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Image URL (Optional)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Image</label>
               <input
-                type="text"
-                name="profilePicture"
-                value={newDoctor.profilePicture}
-                onChange={handleInputChange}
+                type="file"
+                accept="image/*"
+                onChange={(e) => setProfileImageFile(e.target.files[0])}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="https://..."
               />
             </div>
           </div>

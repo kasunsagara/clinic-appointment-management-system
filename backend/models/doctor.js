@@ -16,8 +16,7 @@ const doctorSchema = mongoose.Schema({
         required: true
     },
     profilePicture: {
-        type: String,
-        default: "https://img.freepik.com/free-vector/user-blue-gradient_78370-4692.jpg?semt=ais_hybrid&w=740&q=80"
+        type: String
     },
     availableDays: {
         type: [String],
