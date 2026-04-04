@@ -7,6 +7,7 @@ import SignUpPage from './pages/signUpPage';
 import DoctorsPage from './pages/doctorsPage';
 import BookAppointmentPage from './pages/bookAppintmentPage';
 import MyAppointmentsPage from './pages/myAppoinmentsPage';
+import MyAccountPage from './pages/myAccountPage';
 import AdminDashboard from './pages/adminHomePage';
 import DoctorHomePage from './pages/doctorHomePage';
 
@@ -23,6 +24,7 @@ function App() {
     <Route path="/doctors" element={<DoctorsPage/>}/>
     <Route path="/book-appointment/:id" element={<BookAppointmentPage />} />
     <Route path="/my-appointments" element={<MyAppointmentsPage />} />
+    <Route path="/my-account" element={<MyAccountPage />} />
     <Route path="/admin/*" element={<AdminDashboard/>}/> 
     <Route path="/doctor/*" element={<DoctorHomePage/>}/>
     </Routes>

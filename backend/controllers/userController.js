@@ -133,19 +133,30 @@ export async function getUsers(req, res) {
     }
 }
 
-export async function getUserById(req, res) {
-
-    try {
-        const user = await User.findOne({_id: req.params._id});
-
-        res.json({
-            user: user
-        })
-    } catch(error) {
-        res.json({
-            error: error.message
-        })
+export async function getUserAccount(req, res) {
+  try {
+    const email = req.query.email; 
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
     }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      message: "User profile retrieved successfully",
+      user,
+    });
+  } catch (error) {
+    console.error("Error in getUserProfile:", error);
+    res.status(500).json({
+      message: "Error retrieving user profile",
+      error: error.message,
+    });
+  }
 }
 
 export async function deleteUser(req, res) {
