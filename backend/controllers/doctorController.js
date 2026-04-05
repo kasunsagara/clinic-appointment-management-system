@@ -110,6 +110,52 @@ export async function getDoctorById(req, res) {
   }
 }
 
+export async function updateDoctor(req, res) {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ message: "Please login as admin to edit doctor" });
+        }
+
+        if (req.user.role !== "admin") {
+            return res.status(403).json({ message: "Only admin can edit doctor" });
+        }
+
+        const doctorId = req.params.id; // doctor id from URL
+        const { name, email, password, phone, bio, specialization, availableDays, timeSlots, profilePicture } = req.body;
+
+        const doctor = await Doctor.findById(doctorId);
+        if (!doctor) {
+            return res.status(404).json({ message: "Doctor not found" });
+        }
+
+        const user = await User.findById(doctor.userId);
+        if (!user) {
+            return res.status(404).json({ message: "Associated user not found" });
+        }
+
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (phone) user.phone = phone;
+        if (password) user.password = bcrypt.hashSync(password, 10);
+
+        await user.save();
+
+        if (bio) doctor.bio = bio;
+        if (specialization) doctor.specialization = specialization;
+        if (availableDays) doctor.availableDays = availableDays;
+        if (timeSlots) doctor.timeSlots = timeSlots;
+        if (profilePicture) doctor.profilePicture = profilePicture;
+
+        await doctor.save();
+
+        return res.status(200).json({ message: "Doctor updated successfully", doctor });
+
+    } catch (error) {
+        console.error("Error updating doctor:", error);
+        return res.status(500).json({ message: "Doctor not updated", error: error.message });
+    }
+}
+
 export async function deleteDoctor(req, res) {
 
     if(req.user.role != "admin") {

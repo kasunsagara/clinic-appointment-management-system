@@ -167,6 +167,14 @@ export default function ManageDoctorsPage() {
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
 
+                          {/* Update Button */}
+                          <button
+                            onClick={() => navigate(`/admin/doctors/update-doctor/${doctor._id}`)}
+                            className="px-3 py-1 rounded text-white text-xs font-medium bg-blue-500 hover:bg-blue-600"
+                          >
+                            Update
+                          </button>
+
                           {/* Toggle Button */}
                           <button
                             onClick={() => handleToggleStatus(doctor._id)}

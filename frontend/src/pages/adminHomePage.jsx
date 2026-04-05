@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 import api from "../services/api";
 import ManageDoctorsPage from "./admin/manageDoctorsPage";
 import AddDoctorPage from "./admin/addDoctorPage";
+import UpdateDoctorPage from "./admin/updateDoctorPage";
 import ManageUsersPage from "./admin/manageUsersPage";
 import AddAdminPage from "./admin/addAdminPage";
 import ViewAppointmentsPage from "./admin/viewAppointmentsPage";
@@ -140,6 +141,7 @@ export default function AdminHomePage() {
           {/* Doctors */}
           <Route path="/doctors" element={<ManageDoctorsPage />} />
           <Route path="/doctors/add-doctor" element={<AddDoctorPage />} />
+          <Route path="/doctors/update-doctor/:id" element={<UpdateDoctorPage />} />
 
           {/* Appointments */}
           <Route path="/appointments" element={<ViewAppointmentsPage />} />
