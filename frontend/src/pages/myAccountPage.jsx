@@ -60,8 +60,9 @@ export default function MyAccountPage() {
         <div className="rounded-3xl shadow-lg overflow-hidden bg-white">
 
           {/* Top Colored Area (same div structure inside main card) */}
-          <div className="bg-gradient-to-r from-blue-600 to-teal-500 text-white text-center py-12">
+          <div className="bg-gradient-to-r from-blue-600 to-teal-500 text-white text-center py-8">
             <h1 className="text-4xl font-bold">My Account</h1>
+            <p className="mt-2 text-lg">View your account details</p>
           </div>
 
           {/* Content */}

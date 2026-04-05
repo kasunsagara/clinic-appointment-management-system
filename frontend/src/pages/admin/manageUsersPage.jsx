@@ -65,7 +65,7 @@ export default function ManageUsersPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-100 text-gray-600 border-b border-gray-100 text-sm uppercase tracking-wider">
-                    <th className="p-4 font-semibold">User Details</th>
+                    <th className="p-4 font-semibold">User Name</th>
                     <th className="p-4 font-semibold">Contact</th>
                     <th className="p-4 font-semibold">Role</th>
                     <th className="p-4 font-semibold text-right">Actions</th>

@@ -35,8 +35,8 @@ export default function AddAdminPage() {
   };
 
   return (
-    <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 flex justify-center">
-      <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-sm">
+    <div className="py-10 px-4 flex justify-center">
+      <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-sm h-fit">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Add New Admin</h2>
         <form onSubmit={handleCreateAdmin} className="space-y-4">
           <div>

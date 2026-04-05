@@ -195,15 +195,26 @@ export default function AddDoctorPage() {
               </select>
             </div>
 
-            {/* ✅ file upload එක */}
+            {/* ✅ file upload */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Profile Image</label>
+
               <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => setProfileImageFile(e.target.files[0])}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="hidden"
+                id="profileImageInput"
               />
+
+              <div className="flex justify-start">
+                <label
+                  htmlFor="profileImageInput"
+                  className="cursor-pointer w-88 text-left px-4 py-2 border rounded-lg"
+                >
+                  Click to upload file
+                </label>
+              </div>
 
               {/* ✅ preview */}
               {profileImageFile && (
