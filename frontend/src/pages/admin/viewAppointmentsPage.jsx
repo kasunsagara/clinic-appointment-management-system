@@ -61,10 +61,12 @@ export default function ViewAppointmentsPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-100 text-gray-600 border-b border-gray-100 text-sm uppercase tracking-wider">
-                    <th className="p-4 font-semibold whitespace-nowrap">ID</th>
+                    <th className="p-4 font-semibold whitespace-nowrap">Appoinment ID</th>
+                    <th className="p-4 font-semibold whitespace-nowrap">Appointment Number</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Date / Time</th>
-                    <th className="p-4 font-semibold whitespace-nowrap">Login User</th>
+                    <th className="p-4 font-semibold whitespace-nowrap">User Details</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Doctor</th>
+                    <th className="p-4 font-semibold whitespace-nowrap">Specialization</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Status</th>
                   </tr>
                 </thead>
@@ -77,6 +79,13 @@ export default function ViewAppointmentsPage() {
                       <td className="p-4 whitespace-nowrap">
                         <p className="font-mono text-xs font-bold text-gray-500">
                           {apt.appointmentId}
+                        </p>
+                      </td>
+
+                      {/* Appointment Number */}
+                      <td className="p-4 whitespace-nowrap">
+                        <p className="font-mono text-xs font-bold text-gray-500">
+                          {apt.appointmentNumber || "N/A"}
                         </p>
                       </td>
 
@@ -101,6 +110,10 @@ export default function ViewAppointmentsPage() {
                         <p className="font-bold text-gray-900">
                           Dr. {apt.doctorId?.userId?.name || "Unknown"}
                         </p>
+                      </td>
+
+                      {/* Specialization */}
+                      <td className="p-4 whitespace-nowrap">
                         <p className="text-xs text-indigo-600 font-medium">
                           {apt.doctorId?.specialization || "N/A"}
                         </p>

@@ -6,6 +6,9 @@ const appointmentSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    appointmentNumber: {
+        type: Number
+    },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users",

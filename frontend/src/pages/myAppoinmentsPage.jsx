@@ -82,7 +82,8 @@ export default function MyAppointmentsPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-100 text-gray-500 border-b border-gray-100 text-sm uppercase tracking-wider">
-                    <th className="p-4 font-semibold whitespace-nowrap">ID</th>
+                    <th className="p-4 font-semibold whitespace-nowrap">Appoinment ID</th>
+                    <th className="p-4 font-semibold whitespace-nowrap">Appointment Number</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Date / Time</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Doctor</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Specialization</th>
@@ -98,6 +99,11 @@ export default function MyAppointmentsPage() {
                       {/* ID */}
                       <td className="p-4 whitespace-nowrap">
                         <p className="font-mono text-xs font-bold text-gray-500">{apt.appointmentId}</p>
+                      </td>
+
+                      {/* Appointment Number */}  
+                      <td className="p-4 whitespace-nowrap">
+                        <p className="font-mono text-xs font-bold text-gray-500">{apt.appointmentNumber || "N/A"}</p>
                       </td>
 
                       {/* Date / Time */}

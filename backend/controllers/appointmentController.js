@@ -11,6 +11,7 @@ export async function createAppointment(req, res) {
     }
 
     try {
+        // 🔴 EXISTING CODE (UNCHANGED)
         const latestAppointment = await Appointment.find().sort({appointmentId : -1}).limit(1);
 
         let appointmentId;
@@ -27,8 +28,27 @@ export async function createAppointment(req, res) {
 
             appointmentId = "CA" + newNumber;
         }
+
+        // ✅ NEW LOGIC START (doctor + date based number)
+        const { doctorId, date, time } = req.body;
+
+        const lastDoctorAppointment = await Appointment.find({
+            doctorId: doctorId,
+            date: date,
+            time: time
+        }).sort({ appointmentNumber: -1 }).limit(1);
+
+        let appointmentNumber = 1;
+
+        if (lastDoctorAppointment.length > 0) {
+            appointmentNumber = lastDoctorAppointment[0].appointmentNumber + 1;
+        }
+        // ✅ NEW LOGIC END
+
         const newAppointmentData = req.body;
-        newAppointmentData.appointmentId = appointmentId;
+
+        newAppointmentData.appointmentId = appointmentId; // existing
+        newAppointmentData.appointmentNumber = appointmentNumber; // ✅ added
         newAppointmentData.userId = req.user._id;
 
         const appointment = new Appointment(newAppointmentData);
@@ -36,8 +56,10 @@ export async function createAppointment(req, res) {
         await appointment.save();
 
         res.json({
-            message: "Appointment created successfully"
+            message: "Appointment created successfully",
+            appointmentNumber: appointmentNumber // optional return
         })
+
     } catch(error) {
         res.json({
             message: "Appointment not created",

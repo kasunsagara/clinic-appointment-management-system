@@ -98,7 +98,7 @@ export default function BookAppointment() {
       });
 
       if (response.data.message === "Appointment created successfully") {
-        toast.success("Appointment successfully booked!", { id: toastId });
+        toast.success(`Appointment successfully booked! Your number is ${response.data.appointmentNumber}`, { id: toastId });
         navigate("/my-appointments");
       } else {
         toast.error(response.data.message || "Failed to book appointment", { id: toastId });
