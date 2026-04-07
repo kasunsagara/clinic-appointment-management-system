@@ -8,7 +8,7 @@ import DoctorsPage from './pages/doctorsPage';
 import BookAppointmentPage from './pages/bookAppintmentPage';
 import MyAppointmentsPage from './pages/myAppoinmentsPage';
 import MyAccountPage from './pages/myAccountPage';
-import AdminDashboard from './pages/adminHomePage';
+import AdminHomePage from './pages/adminHomePage';
 import DoctorHomePage from './pages/doctorHomePage';
 
 function App() {
@@ -25,7 +25,7 @@ function App() {
     <Route path="/book-appointment/:id" element={<BookAppointmentPage />} />
     <Route path="/my-appointments" element={<MyAppointmentsPage />} />
     <Route path="/my-account" element={<MyAccountPage />} />
-    <Route path="/admin/*" element={<AdminDashboard/>}/> 
+    <Route path="/admin/*" element={<AdminHomePage/>}/> 
     <Route path="/doctor/*" element={<DoctorHomePage/>}/>
     </Routes>
     </BrowserRouter> 

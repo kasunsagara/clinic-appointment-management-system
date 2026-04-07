@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import { BsGraphUp, BsCalendar } from "react-icons/bs";
 import { FaSignOutAlt } from "react-icons/fa";
+import DoctorDashboardPage from "./doctor/doctorDashboardPage";
 import ManageAppointmentsPage from "./doctor/manageAppointmentsPage";
 import { toast } from "react-hot-toast";
 import api from "../services/api";
@@ -100,16 +101,7 @@ export default function DoctorHomePage() {
             }
           />
 
-          <Route
-            path="/dashboard"
-            element={
-              <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
-                <h1 className="text-2xl font-bold text-gray-700">
-                  {user ? `Doctor ${user.name} Dashboard` : "Doctor Dashboard"}
-                </h1>
-              </div>
-            }
-          />
+          <Route path="/dashboard" element={<DoctorDashboardPage />} />
 
           <Route path="/appointments" element={<ManageAppointmentsPage />} />
 

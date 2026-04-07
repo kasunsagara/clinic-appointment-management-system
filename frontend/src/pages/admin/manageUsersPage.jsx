@@ -95,12 +95,18 @@ export default function ManageUsersPage() {
                         </span>
                       </td>
                       <td className="p-4 flex justify-end">
-                        <button
-                          onClick={() => handleDeleteUser(u._id)}
-                          className="px-2 py-1 rounded text-white text-xs font-medium  bg-red-500 hover:bg-red-600"
-                        >
-                          Delete
-                        </button>
+                        {u.email === "kasunsagara689@gmail.com" ? (
+                          <span className="px-2 py-1 rounded text-xs font-bold bg-gray-300 text-gray-700">
+                            Protected 
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => handleDeleteUser(u._id)}
+                            className="px-2 py-1 rounded text-white text-xs font-medium bg-red-500 hover:bg-red-600"
+                          >
+                            Delete
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}

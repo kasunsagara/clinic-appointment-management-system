@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
-import { BsGraphUp, BsPeople, BsCalendar, BsPerson } from "react-icons/bs";
+import { BsGraphUp, BsCalendar, BsPeople } from "react-icons/bs";
+import { FaUserMd } from "react-icons/fa";
 import { FaSignOutAlt } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import api from "../services/api";
+import AdminDashboardPage from "./admin/adminDashboardPage";
 import ManageDoctorsPage from "./admin/manageDoctorsPage";
 import AddDoctorPage from "./admin/addDoctorPage";
 import UpdateDoctorPage from "./admin/updateDoctorPage";
@@ -73,8 +75,16 @@ export default function AdminHomePage() {
               to="/admin/doctors"
               className="flex items-center gap-3 p-3 rounded-xl font-medium text-gray-700 hover:bg-gradient-to-r hover:from-blue-600 hover:to-teal-500 hover:text-white transition-all shadow-sm hover:shadow-md"
             >
-              <BsPeople size={20} />
+              <FaUserMd size={20} />
               Doctors
+            </Link>
+
+            <Link
+              to="/admin/users"
+              className="flex items-center gap-3 p-3 rounded-xl font-medium text-gray-700 hover:bg-gradient-to-r hover:from-blue-600 hover:to-teal-500 hover:text-white transition-all shadow-sm hover:shadow-md"
+            >
+              <BsPeople size={20} />
+              Users
             </Link>
 
             <Link
@@ -83,15 +93,7 @@ export default function AdminHomePage() {
             >
               <BsCalendar size={20} />
               Appointments
-            </Link>
-
-            <Link
-              to="/admin/users"
-              className="flex items-center gap-3 p-3 rounded-xl font-medium text-gray-700 hover:bg-gradient-to-r hover:from-blue-600 hover:to-teal-500 hover:text-white transition-all shadow-sm hover:shadow-md"
-            >
-              <BsPerson size={20} />
-              Users
-            </Link>
+            </Link>            
           </div>
         </div>
 
@@ -127,28 +129,19 @@ export default function AdminHomePage() {
           />
 
           {/* Dashboard */}
-          <Route
-            path="/dashboard"
-            element={
-              <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
-                <h1 className="text-2xl font-bold text-gray-700">
-                  Manage Dashboard
-                </h1>
-              </div>
-            }
-          />
+          <Route path="/dashboard" element={<AdminDashboardPage />} />
 
           {/* Doctors */}
           <Route path="/doctors" element={<ManageDoctorsPage />} />
           <Route path="/doctors/add-doctor" element={<AddDoctorPage />} />
           <Route path="/doctors/update-doctor/:id" element={<UpdateDoctorPage />} />
 
-          {/* Appointments */}
-          <Route path="/appointments" element={<ViewAppointmentsPage />} />
-
           {/* Users */}
           <Route path="/users" element={<ManageUsersPage />} />
           <Route path="/users/add-admin" element={<AddAdminPage />} />
+
+          {/* Appointments */}
+          <Route path="/appointments" element={<ViewAppointmentsPage />} />          
 
         </Routes>
 

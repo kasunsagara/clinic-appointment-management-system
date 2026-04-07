@@ -162,18 +162,28 @@ export async function getUserAccount(req, res) {
 export async function deleteUser(req, res) {
 
     if(req.user.role != "admin") {
-        res.json({
+        return res.json({
             message: "Please login as admin to delete user"
         })
-        return
     }    
 
     try {
+
+        const user = await User.findById(req.params._id);
+
+        // 🔒 prevent deleting main admin
+        if(user.email === "kasunsagara689@gmail.com") {
+            return res.json({
+                message: "Main admin cannot be deleted"
+            })
+        }
+
         await User.deleteOne({_id: req.params._id});
 
         res.json({
             message: "User deleted successfully"
         })
+
     } catch(error) {
         res.json({
             message: "User not deleted"

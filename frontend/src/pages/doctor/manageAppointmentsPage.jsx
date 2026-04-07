@@ -81,7 +81,7 @@ export default function ManageAppointmentsPage() {
                     <th className="p-4 font-semibold whitespace-nowrap">Date / Time</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Patient Details</th>
                     <th className="p-4 font-semibold whitespace-nowrap">Status</th>
-                    <th className="p-4 font-semibold">Actions</th>
+                    <th className="p-4 font-semibold whitespace-nowrap">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -103,20 +103,31 @@ export default function ManageAppointmentsPage() {
 
                       {/* Date / Time */}
                       <td className="p-4 whitespace-nowrap">
-                        <p className="font-semibold text-gray-900">{apt.date}</p>
+                        <p className="font-semibold text-gray-800">{apt.date}</p>
                         <p className="text-sm text-gray-600">{apt.time}</p>
                       </td>
 
                       {/* Patient Details */}
                       <td className="p-4 text-sm text-gray-600">
-                        <p className="font-medium text-gray-600">
-                          Name: {apt.patient?.name || "N/A"}
+                        <p>
+                          <span className="text-gray-600">Name: </span>
+                          <span className="font-semibold text-gray-800">
+                            {apt.patient?.name || "N/A"}
+                          </span>
                         </p>
-                        <p className="font-medium text-gray-600">
-                          Age: {apt.patient?.age || "N/A"}
+
+                        <p>
+                          <span className="text-gray-600">Age: </span>
+                          <span className="font-semibold text-gray-800">
+                            {apt.patient?.age || "N/A"}
+                          </span>
                         </p>
-                        <p className="font-medium text-gray-600">
-                          Reason: {apt.patient?.reason || "No reason provided"}
+
+                        <p>
+                          <span className="text-gray-600">Reason: </span>
+                          <span className="font-semibold text-gray-800">
+                            {apt.patient?.reason || "No reason provided"}
+                          </span>
                         </p>
                       </td>
 

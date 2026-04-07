@@ -91,7 +91,7 @@ export default function ViewAppointmentsPage() {
 
                       {/* Date / Time */}
                       <td className="p-4 whitespace-nowrap">
-                        <p className="font-semibold text-gray-900">{apt.date}</p>
+                        <p className="font-semibold text-gray-800">{apt.date}</p>
                         <p className="text-sm text-gray-600">{apt.time}</p>
                       </td>
 
