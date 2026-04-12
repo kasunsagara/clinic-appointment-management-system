@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 import { FaUser, FaEnvelope, FaLock, FaPhone } from "react-icons/fa";
 
 export default function SignUpPage() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({ 
     name: "",
     email: "",
     password: "",
