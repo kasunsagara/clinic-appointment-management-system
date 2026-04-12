@@ -1,127 +1,132 @@
-import Appointment from "../models/appointment.js";
-import Doctor from "../models/doctor.js";
+import { pool } from "../config/db.js";
 
 export async function createAppointment(req, res) {
-
-    if(req.user.role != "patient") {
-        res.json({
+    if(req.user.role !== "patient") {
+        return res.json({
             Message: "Please login as patient to create appointment"
-        })
-        return
+        });
     }
 
     try {
-        // 🔴 EXISTING CODE (UNCHANGED)
-        const latestAppointment = await Appointment.find().sort({appointmentId : -1}).limit(1);
-
+        const [latestRows] = await pool.query("SELECT appointmentId FROM appointments ORDER BY id DESC LIMIT 1");
+        
         let appointmentId;
-
-        if(latestAppointment.length == 0) {
-            appointmentId = "CA0001"
+        if(latestRows.length === 0) {
+            appointmentId = "CA0001";
         } else {
-            const currentAppointmentId = latestAppointment[0].appointmentId;
-
+            const currentAppointmentId = latestRows[0].appointmentId;
             const numberString = currentAppointmentId.replace("CA", "");
             const number = parseInt(numberString);
-
             const newNumber = (number + 1).toString().padStart(4, "0");
-
             appointmentId = "CA" + newNumber;
         }
 
-        // ✅ NEW LOGIC START (doctor + date based number)
-        const { doctorId, date, time } = req.body;
+        const { doctorId, date, time, patient } = req.body;
 
-        const lastDoctorAppointment = await Appointment.find({
-            doctorId: doctorId,
-            date: date,
-            time: time
-        }).sort({ appointmentNumber: -1 }).limit(1);
+        const [lastDocAppt] = await pool.query(
+            "SELECT appointmentNumber FROM appointments WHERE doctorId = ? AND date = ? AND time = ? ORDER BY appointmentNumber DESC LIMIT 1",
+            [doctorId, date, time]
+        );
 
         let appointmentNumber = 1;
-
-        if (lastDoctorAppointment.length > 0) {
-            appointmentNumber = lastDoctorAppointment[0].appointmentNumber + 1;
+        if (lastDocAppt.length > 0) {
+            appointmentNumber = lastDocAppt[0].appointmentNumber + 1;
         }
-        // ✅ NEW LOGIC END
 
-        const newAppointmentData = req.body;
+        const userId = req.user.id || req.user._id;
+        
+        const patientName = patient?.name;
+        const patientAge = patient?.age;
+        const patientReason = patient?.reason;
 
-        newAppointmentData.appointmentId = appointmentId; // existing
-        newAppointmentData.appointmentNumber = appointmentNumber; // ✅ added
-        newAppointmentData.userId = req.user._id;
-
-        const appointment = new Appointment(newAppointmentData);
-
-        await appointment.save();
+        await pool.query(
+            "INSERT INTO appointments (appointmentId, appointmentNumber, userId, doctorId, date, time, status, patient_name, patient_age, patient_reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [appointmentId, appointmentNumber, userId, doctorId, date, time, "pending", patientName, patientAge, patientReason]
+        );
 
         res.json({
             message: "Appointment created successfully",
-            appointmentNumber: appointmentNumber // optional return
-        })
+            appointmentNumber: appointmentNumber 
+        });
 
     } catch(error) {
         res.json({
             message: "Appointment not created",
             error: error.message
-        })
+        });
     }
 }
 
 export async function getAppointments(req, res) {
-
-    if(req.user.role != "admin" && req.user.role != "patient" && req.user.role != "doctor") {
+    if(req.user.role !== "admin" && req.user.role !== "patient" && req.user.role !== "doctor") {
         return res.status(403).json({ message: "Access denied" });
     }
 
     try {
-        let appointmentList;
+        let query = `
+            SELECT 
+                a.*,
+                p.id as _patient_id, p.name as patient_name_user, p.email as patient_email, p.phone as patient_phone,
+                d.id as _doctor_id, d.specialization as doctor_spec,
+                du.id as _du_id, du.name as doctor_name, du.email as doctor_email, du.phone as doctor_phone
+            FROM appointments a
+            JOIN users p ON a.userId = p.id
+            JOIN doctors d ON a.doctorId = d.id
+            JOIN users du ON d.userId = du.id
+        `;
+        let queryParams = [];
 
-        if(req.user.role == "admin") {
-            // Admin: see all appointments
-            appointmentList = await Appointment.find()
-                .populate("userId", "name email phone")
-                .populate({
-                    path: "doctorId",
-                    select: "specialization",
-                    populate: {
-                        path: "userId",
-                        select: "name email phone"
-                    }
-                });
-        } else if(req.user.role == "patient") {
-            // Patient: see only their own appointments
-            appointmentList = await Appointment.find({ userId: req.user._id })
-                .populate("userId", "name email phone")
-                .populate({
-                    path: "doctorId",
-                    select: "specialization",
-                    populate: {
-                        path: "userId",
-                        select: "name email phone"
-                    }
-                });
-        } else if(req.user.role == "doctor") {
-            // Doctor: see only appointments assigned to them
-            // Assuming doctorId in Appointment references the Doctor model which has userId = req.user._id
-            const doctor = await Doctor.findOne({ userId: req.user._id });
-            if (!doctor) {
+        const requestUserId = req.user.id || req.user._id;
+
+        if (req.user.role === "patient") {
+            query += " WHERE a.userId = ?";
+            queryParams.push(requestUserId);
+        } else if (req.user.role === "doctor") {
+            const [docRows] = await pool.query("SELECT id FROM doctors WHERE userId = ?", [requestUserId]);
+            if (docRows.length === 0) {
                 return res.status(404).json({ message: "Doctor profile not found" });
             }
-
-            appointmentList = await Appointment.find({ doctorId: doctor._id })
-                .populate("userId", "name email phone")
-                .populate({
-                    path: "doctorId",
-                    select: "specialization",
-                    populate: {
-                        path: "userId",
-                        select: "name email phone"
-                    }
-                });
+            query += " WHERE a.doctorId = ?";
+            queryParams.push(docRows[0].id);
         }
 
-        res.json({ list: appointmentList });
+        const [appointments] = await pool.query(query, queryParams);
+
+        const formattedList = appointments.map(row => {
+            return {
+                _id: row.id,
+                id: row.id,
+                appointmentId: row.appointmentId,
+                appointmentNumber: row.appointmentNumber,
+                date: row.date,
+                time: row.time,
+                status: row.status,
+                patient: {
+                    name: row.patient_name,
+                    age: row.patient_age,
+                    reason: row.patient_reason
+                },
+                // Populate mappings
+                userId: {
+                    _id: row._patient_id,
+                    name: row.patient_name_user,
+                    email: row.patient_email,
+                    phone: row.patient_phone
+                },
+                doctorId: {
+                    _id: row._doctor_id,
+                    specialization: row.doctor_spec,
+                    userId: {
+                        _id: row._du_id,
+                        name: row.doctor_name,
+                        email: row.doctor_email,
+                        phone: row.doctor_phone
+                    }
+                }
+            };
+        });
+
+        res.json({ list: formattedList });
 
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -137,17 +142,21 @@ export async function updateAppointmentStatus(req, res) {
     }
 
     try {
-        const appointment = await Appointment.findByIdAndUpdate(
-            req.params.id,
-            { status },
-            { new: true }
+        const appointmentIdToUpdate = req.params.id || req.params._id;
+
+        const [result] = await pool.query(
+            "UPDATE appointments SET status = ? WHERE id = ?",
+            [status, appointmentIdToUpdate]
         );
 
-        if (!appointment) {
+        if (result.affectedRows === 0) {
             return res.status(404).json({ message: "Appointment not found" });
         }
 
-        res.json({ success: true, appointment });
+        // Return updated object
+        const [updatedApptRows] = await pool.query("SELECT * FROM appointments WHERE id = ?", [appointmentIdToUpdate]);
+        
+        res.json({ success: true, appointment: { ...updatedApptRows[0], _id: updatedApptRows[0].id } });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
