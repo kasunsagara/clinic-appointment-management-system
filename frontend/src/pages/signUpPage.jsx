@@ -90,26 +90,6 @@ export default function SignUpPage() {
               </div>
             </div>
 
-            {/* Phone */}
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                  <FaPhone />
-                </div>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="text"
-                  required
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="pl-10 block w-full px-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                  placeholder="0771234567"
-                />
-              </div>
-            </div>
-
             {/* Password */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
@@ -127,6 +107,26 @@ export default function SignUpPage() {
                   onChange={handleChange}
                   className="pl-10 block w-full px-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   placeholder="••••••••"
+                />
+              </div>
+            </div>            
+
+            {/* Phone */}
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                  <FaPhone />
+                </div>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="text"
+                  required
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="pl-10 block w-full px-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="0771234567"
                 />
               </div>
             </div>
