@@ -80,7 +80,8 @@ export async function loginUser(req, res) {
           _id: user._id,
           name: user.name,
           email: user.email,
-          role: user.role
+          role: user.role,
+          isMainAdmin: user.isMainAdmin
         }
       },
       process.env.JWT_SECRET
@@ -93,7 +94,8 @@ export async function loginUser(req, res) {
         _id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        isMainAdmin: user.isMainAdmin
       }
     });
 
