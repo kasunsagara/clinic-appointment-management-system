@@ -80,18 +80,6 @@ export async function createDoctor(req, res) {
 }
 
 export async function getDoctors(req, res) {
-  if (!req.user) {
-    return res.status(401).json({ 
-        message: "Unauthorized - No user" 
-    });
-  }
-
-  if (req.user.role !== "admin" && req.user.role !== "patient") {
-    return res.status(403).json({ 
-        message: "Access denied" 
-    });
-  }
-
   try {
     const [doctors] = await pool.query(`
         SELECT d.*, 
