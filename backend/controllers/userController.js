@@ -1,4 +1,4 @@
-import User from "../models/user.js";
+import { pool } from "../config/db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -6,16 +6,19 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export async function createUser(req, res) {
-    const newUserData = req.body;
+    const { name, email, password, phone } = req.body;
+    let role = req.body.role || "patient";
+    let isMainAdmin = false;
 
     try {
-        const existingMainAdmin = await User.findOne({ isMainAdmin: true });
+        const [mainAdminRows] = await pool.query("SELECT * FROM users WHERE isMainAdmin = true");
+        const existingMainAdmin = mainAdminRows.length > 0;
 
         if (!existingMainAdmin) {
-            newUserData.role = "admin";       
-            newUserData.isMainAdmin = true;  
+            role = "admin";       
+            isMainAdmin = true;  
         } else {
-            if (newUserData.role === "admin") {
+            if (role === "admin") {
                 if (!req.user) {
                     return res.json({
                         message: "Please login as main admin to create admin account"
@@ -26,26 +29,33 @@ export async function createUser(req, res) {
                         message: "Only main admin can create another admin account"
                     });
                 }
-
-                newUserData.isMainAdmin = false;
+                isMainAdmin = false;
             }
         }
 
-        if (newUserData.role === "doctor") {
+        if (role === "doctor") {
             return res.json({
                 message: "Doctors cannot be created using this endpoint"
             });
         }
 
-        newUserData.password = bcrypt.hashSync(newUserData.password, 10);
+        const hashedPassword = bcrypt.hashSync(password, 10);
 
-        const user = new User(newUserData);
-        await user.save();
+        await pool.query(
+            "INSERT INTO users (name, email, password, phone, role, isMainAdmin) VALUES (?, ?, ?, ?, ?, ?)",
+            [name, email, hashedPassword, phone, role, isMainAdmin]
+        );
 
         res.json({
             message: "User created successfully"
         });
     } catch (error) {
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.json({
+                message: "User not created",
+                error: "Email already in use"
+            });
+        }
         res.json({
             message: "User not created",
             error: error.message
@@ -55,7 +65,8 @@ export async function createUser(req, res) {
 
 export async function loginUser(req, res) {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const [userRows] = await pool.query("SELECT * FROM users WHERE email = ?", [req.body.email]);
+    const user = userRows[0];
 
     if (!user) {
       return res.json({
@@ -77,11 +88,12 @@ export async function loginUser(req, res) {
     const token = jwt.sign(
       {
         user: {
-          _id: user._id,
+          id: user.id,
+          _id: user.id, // For backward compatibility with existing frontends/middleware
           name: user.name,
           email: user.email,
           role: user.role,
-          isMainAdmin: user.isMainAdmin
+          isMainAdmin: !!user.isMainAdmin
         }
       },
       process.env.JWT_SECRET
@@ -91,11 +103,12 @@ export async function loginUser(req, res) {
       message: "User logged successfully",
       token: token,
       user: {
-        _id: user._id,
+        id: user.id,
+        _id: user.id, // For backward compatibility
         name: user.name,
         email: user.email,
         role: user.role,
-        isMainAdmin: user.isMainAdmin
+        isMainAdmin: !!user.isMainAdmin
       }
     });
 
@@ -119,8 +132,7 @@ export async function logoutUser(req, res) {
 }
 
 export async function getUsers(req, res) {
-
-    if(req.user.role != "admin") {
+    if(req.user.role !== "admin") {
         res.json({
             message: "Please login as admin to view user details"
         })
@@ -128,7 +140,7 @@ export async function getUsers(req, res) {
     }
 
     try {
-        const userList = await User.find();
+        const [userList] = await pool.query("SELECT id, id as _id, name, email, phone, role, isMainAdmin FROM users");
 
         res.json({
             list: userList
@@ -147,15 +159,19 @@ export async function getUserAccount(req, res) {
       return res.status(400).json({ message: "Email is required" });
     }
 
-    const user = await User.findOne({ email });
+    const [userRows] = await pool.query("SELECT id, name, email, phone, role, isMainAdmin FROM users WHERE email = ?", [email]);
+    const user = userRows[0];
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Adjusting for client expectations (_id mapping)
+    const formattedUser = { ...user, _id: user.id };
+
     res.status(200).json({
       message: "User profile retrieved successfully",
-      user,
+      user: formattedUser,
     });
   } catch (error) {
     console.error("Error in getUserProfile:", error);
@@ -167,7 +183,6 @@ export async function getUserAccount(req, res) {
 }
 
 export async function deleteUser(req, res) {
-
     if (req.user.role !== "admin") {
         return res.json({
             message: "Please login as admin to delete user"
@@ -175,7 +190,11 @@ export async function deleteUser(req, res) {
     }
 
     try {
-        const user = await User.findById(req.params._id);
+        // req.params._id holds the target user ID (from express routes /api/users/:_id)
+        const targetId = req.params._id || req.params.id;
+        
+        const [userRows] = await pool.query("SELECT * FROM users WHERE id = ?", [targetId]);
+        const user = userRows[0];
 
         if (!user) {
             return res.json({
@@ -189,7 +208,7 @@ export async function deleteUser(req, res) {
             });
         }
 
-        await User.deleteOne({ _id: req.params._id });
+        await pool.query("DELETE FROM users WHERE id = ?", [targetId]);
 
         res.json({
             message: "User deleted successfully"
@@ -197,45 +216,8 @@ export async function deleteUser(req, res) {
 
     } catch (error) {
         res.json({
-            message: "User not deleted"
+            message: "User not deleted",
+            error: error.message
         });
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
