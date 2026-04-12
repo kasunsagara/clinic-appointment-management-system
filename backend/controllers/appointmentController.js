@@ -90,6 +90,8 @@ export async function getAppointments(req, res) {
             queryParams.push(docRows[0].id);
         }
 
+        query += " ORDER BY a.appointmentId ASC";
+
         const [appointments] = await pool.query(query, queryParams);
 
         const formattedList = appointments.map(row => {
