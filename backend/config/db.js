@@ -1,14 +1,32 @@
-import mongoose from 'mongoose';
+import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
 
 const connectDB = async () => {
     try {
-        const mongoUrl = process.env.MONGO_DB_URI;
-        await mongoose.connect(mongoUrl);
-        console.log("Database connected");
+        const connection = await pool.getConnection();
+        console.log("Database connected to MySQL");
+
+        // ❌ No table creation here (already created manually)
+
+        connection.release();
     } catch (error) {
         console.error("Database connection error:", error);
         process.exit(1);
     }
 };
 
+export { pool };
 export default connectDB;
