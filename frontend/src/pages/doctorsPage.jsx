@@ -3,6 +3,7 @@ import api from "../services/api";
 import DoctorCard from "../components/doctorCard";
 import { FaSearch } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function DoctorsPage() {
   const [doctors, setDoctors] = useState([]);
@@ -10,6 +11,7 @@ export default function DoctorsPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [specialization, setSpecialization] = useState("");
+  const navigate = useNavigate();
 
   const specializations = [
     "Cardiologist",
@@ -64,8 +66,22 @@ export default function DoctorsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Section */}
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl font-extrabold text-gray-900 mb-4">Our Specialist Doctors</h1>
+        <div className="mb-12 text-center relative">
+
+          {/* Home Button (Top Right) */}
+          <div className="absolute top-0 right-0">
+            <button
+              onClick={() => navigate("/")}
+              className="bg-gray-500 hover:bg-gray-700 text-white px-5 py-2 rounded-xl text-sm font-semibold transition"
+            >
+              Back to Home
+            </button>
+          </div>
+
+          <h1 className="text-4xl font-extrabold text-gray-900 mb-4">
+            Our Specialist Doctors
+          </h1>
+
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Find and book an appointment with our experienced doctors. Use the filters below to find the perfect match for your healthcare needs.
           </p>

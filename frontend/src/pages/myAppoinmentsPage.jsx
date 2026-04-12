@@ -4,11 +4,11 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 export default function MyAppointmentsPage() {
-  const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!user) {
@@ -60,9 +60,22 @@ export default function MyAppointmentsPage() {
     <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
 
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Appointments</h1>
-          <p className="text-gray-600">Track your booked appointments</p>
+        <div className="mb-6 flex justify-between items-start">
+          
+          {/* Left side */}
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">My Appointments</h1>
+            <p className="text-gray-600">Track your booked appointments</p>
+          </div>
+
+          {/* Right side - Home Button */}
+          <button
+            onClick={() => navigate("/")}
+            className="bg-gray-500 hover:bg-gray-700 text-white px-5 py-2 rounded-xl text-sm font-semibold transition"
+          >
+            Back to Home
+          </button>
+
         </div>
 
         {appointments.length === 0 ? (
