@@ -8,7 +8,7 @@ const pool = mysql.createPool({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    port: process.env.DB_PORT,
+    port: process.env.DB_PORT,  
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -17,9 +17,7 @@ const pool = mysql.createPool({
 const connectDB = async () => {
     try {
         const connection = await pool.getConnection();
-        console.log("Database connected to MySQL");
-
-        // ❌ No table creation here (already created manually)
+        console.log("Database connected");
 
         connection.release();
     } catch (error) {
