@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
-import { FaCalendarAlt, FaClock, FaClipboardList, FaUserMd, FaUser, FaUserAlt } from "react-icons/fa";
+import { FaCalendarAlt, FaClock, FaClipboardList, FaUserMd, FaUser, FaBirthdayCake } from "react-icons/fa";
 
 export default function BookAppointment() {
   const { id } = useParams();
@@ -230,7 +230,7 @@ export default function BookAppointment() {
                   {/* Age */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                      <FaUserAlt className="text-blue-500" /> Age
+                      <FaBirthdayCake className="text-blue-500" /> Age
                     </label>
                     <input
                       type="number"
