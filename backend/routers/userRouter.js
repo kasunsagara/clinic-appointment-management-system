@@ -8,6 +8,6 @@ userRouter.post("/login", loginUser);
 userRouter.post("/logout", logoutUser);
 userRouter.get("/", getUsers);
 userRouter.get("/me", getUserAccount);
-userRouter.delete("/:_id", deleteUser);
+userRouter.delete("/:id", deleteUser);
 
 export default userRouter;

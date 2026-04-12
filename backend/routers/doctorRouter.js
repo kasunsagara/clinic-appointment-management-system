@@ -7,7 +7,7 @@ doctorRouter.post("/", createDoctor);
 doctorRouter.get("/", getDoctors);
 doctorRouter.get("/:id", getDoctorById);
 doctorRouter.put("/:id", updateDoctor);
-doctorRouter.delete("/:_id", deleteDoctor);
+doctorRouter.delete("/:id", deleteDoctor);
 doctorRouter.put("/:id/status", updateDoctorStatus);
 
 export default doctorRouter;
