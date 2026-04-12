@@ -95,9 +95,9 @@ export default function ManageUsersPage() {
                         </span>
                       </td>
                       <td className="p-4 flex justify-end">
-                        {u.email === "kasunsagara689@gmail.com" ? (
+                        {u.isMainAdmin ? (
                           <span className="px-2 py-1 rounded text-xs font-bold bg-gray-300 text-gray-700">
-                            Protected 
+                            Protected
                           </span>
                         ) : (
                           <button

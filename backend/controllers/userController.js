@@ -6,36 +6,40 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export async function createUser(req, res) {
-
     const newUserData = req.body;
 
-    if(newUserData.role === "admin") {
-        if(!req.user) {
-            res.json({
-                message: "Please login as admin to create admin account"
-            })
-            return
-        }
-        if(req.user.role !== "admin") {
-            res.json({
-                message: "Only admin can create another admin account"
-            })
-            return
-        }
-    }
-
-    if(newUserData.role === "doctor") {
-        res.json({
-            message: "Doctors cannot be created using this endpoint"
-        })
-        return
-    }
-
-    newUserData.password = bcrypt.hashSync(newUserData.password, 10);
-
-    const user = new User(newUserData);
-
     try {
+        const existingMainAdmin = await User.findOne({ isMainAdmin: true });
+
+        if (!existingMainAdmin) {
+            newUserData.role = "admin";       
+            newUserData.isMainAdmin = true;  
+        } else {
+            if (newUserData.role === "admin") {
+                if (!req.user) {
+                    return res.json({
+                        message: "Please login as main admin to create admin account"
+                    });
+                }
+                if (!req.user.isMainAdmin) {
+                    return res.json({
+                        message: "Only main admin can create another admin account"
+                    });
+                }
+
+                newUserData.isMainAdmin = false;
+            }
+        }
+
+        if (newUserData.role === "doctor") {
+            return res.json({
+                message: "Doctors cannot be created using this endpoint"
+            });
+        }
+
+        newUserData.password = bcrypt.hashSync(newUserData.password, 10);
+
+        const user = new User(newUserData);
         await user.save();
 
         res.json({
@@ -43,7 +47,8 @@ export async function createUser(req, res) {
         });
     } catch (error) {
         res.json({
-            message: "User not created"
+            message: "User not created",
+            error: error.message
         });
     }
 }
@@ -161,33 +166,37 @@ export async function getUserAccount(req, res) {
 
 export async function deleteUser(req, res) {
 
-    if(req.user.role != "admin") {
+    if (req.user.role !== "admin") {
         return res.json({
             message: "Please login as admin to delete user"
-        })
-    }    
+        });
+    }
 
     try {
-
         const user = await User.findById(req.params._id);
 
-        // 🔒 prevent deleting main admin
-        if(user.email === "kasunsagara689@gmail.com") {
+        if (!user) {
             return res.json({
-                message: "Main admin cannot be deleted"
-            })
+                message: "User not found"
+            });
         }
 
-        await User.deleteOne({_id: req.params._id});
+        if (user.isMainAdmin) {
+            return res.json({
+                message: "Main admin cannot be deleted"
+            });
+        }
+
+        await User.deleteOne({ _id: req.params._id });
 
         res.json({
             message: "User deleted successfully"
-        })
+        });
 
-    } catch(error) {
+    } catch (error) {
         res.json({
             message: "User not deleted"
-        })
+        });
     }
 }
 

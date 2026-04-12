@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FaGraduationCap, FaCalendarAlt, FaCheckCircle } from "react-icons/fa";
+import { FaUserMd, FaCalendarAlt, FaCheckCircle } from "react-icons/fa";
 
 export default function DoctorCard({ doctor }) {
   return (
@@ -34,7 +34,7 @@ export default function DoctorCard({ doctor }) {
         </div>
 
         <div className="flex items-center gap-2 text-blue-600 mb-4 bg-blue-50 w-fit px-3 py-1 rounded-full text-sm font-medium">
-          <FaGraduationCap />
+          <FaUserMd />
           {doctor.specialization}
         </div>
 

@@ -22,6 +22,10 @@ const userSchema = mongoose.Schema({
         type: String,
         enum: ["patient", "doctor", "admin"],
         default: "patient"
+    },
+    isMainAdmin: {
+        type: Boolean,
+        default: false
     }
 });
 
