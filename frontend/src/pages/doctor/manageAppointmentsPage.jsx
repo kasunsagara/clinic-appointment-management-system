@@ -110,22 +110,22 @@ export default function ManageAppointmentsPage() {
                       {/* Patient Details */}
                       <td className="p-4 text-sm text-gray-600">
                         <p>
-                          <span className="text-gray-600">Name: </span>
-                          <span className="font-semibold text-gray-800">
+                          <span className="font-semibold text-gray-800">Name: </span>
+                          <span className="text-gray-600">
                             {apt.patient?.name || "N/A"}
                           </span>
                         </p>
 
                         <p>
-                          <span className="text-gray-600">Age: </span>
-                          <span className="font-semibold text-gray-800">
+                          <span className="font-semibold text-gray-800">Age: </span>
+                          <span className="text-gray-600">
                             {apt.patient?.age || "N/A"}
                           </span>
                         </p>
 
                         <p>
-                          <span className="text-gray-600">Reason: </span>
-                          <span className="font-semibold text-gray-800">
+                          <span className="font-semibold text-gray-800">Reason: </span>
+                          <span className="text-gray-600">
                             {apt.patient?.reason || "No reason provided"}
                           </span>
                         </p>

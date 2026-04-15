@@ -139,9 +139,26 @@ export default function MyAppointmentsPage() {
 
                       {/* Patient Details */}
                       <td className="p-4 text-sm text-gray-600">
-                        <p className="font-medium text-gray-600">Name: {apt.patient?.name || "N/A"}</p>
-                        <p className="font-medium text-gray-600">Age: {apt.patient?.age || "N/A"}</p>
-                        <p className="font-medium text-gray-600">Reason: {apt.patient?.reason || "No reason provided"}</p>
+                        <p>
+                          <span className="font-semibold text-gray-800">Name: </span>
+                          <span className="text-gray-600">
+                            {apt.patient?.name || "N/A"}
+                          </span>
+                        </p>
+
+                        <p>
+                          <span className="font-semibold text-gray-800">Age: </span>
+                          <span className="text-gray-600">
+                            {apt.patient?.age || "N/A"}
+                          </span>
+                        </p>
+
+                        <p>
+                          <span className="font-semibold text-gray-800">Reason: </span>
+                          <span className="text-gray-600">
+                            {apt.patient?.reason || "No reason provided"}
+                          </span>
+                        </p>
                       </td>
 
                       {/* Status */}
