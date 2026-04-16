@@ -32,22 +32,4 @@ app.listen (
 )
 
 
-/*
-admin
-{
-    "email": "1@example.com",
-    "password": "1111"
-}
-
-patient
-{
-    "email": "2@example.com",
-    "password": "2222"
-}
-
-doctor
-{
-    "email": "3@example.com",
-    "password": "33333333"
-}
-*/    
+ 
